@@ -1,0 +1,7 @@
+.python-version
+config.json
+card_library/
+decklists/
+__pycache__/
+*.pyc
+.DS_Store

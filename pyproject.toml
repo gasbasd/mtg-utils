@@ -1,0 +1,22 @@
+[project]
+name = "mtg-utils"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Simone Gasbarroni",email = "simone.gasbarroni@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "click (>=8.2.1,<9.0.0)",
+    "requests (>=2.32.4,<3.0.0)",
+    "cloudscraper (>=1.2.71,<2.0.0)"
+]
+
+[tool.poetry.scripts]
+mtg-utils = "mtg_utils.main:cli"
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
