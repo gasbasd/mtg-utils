@@ -65,24 +65,39 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
             # Get info about this card in other decks
             in_other_decks = cards_in_decks.get(card_name, [])
             
-            # Calculate how many we can get from other decks
-            total_available_in_other_decks = sum(min(deck_qty, missing_quantity) for deck_name, deck_qty in in_other_decks)
+            # First count how many decks have this card and total quantity
+            total_in_other_decks = sum(qty for _, qty in in_other_decks)
+            decks_with_card = len(in_other_decks)
             
-            # Calculate how many are still missing after checking everywhere
-            still_missing = missing_quantity - total_available_in_other_decks
-            
-            # Track cards by deck
-            for other_deck, qty in in_other_decks:
-                cards_by_deck[other_deck].append((card_name, qty, missing_quantity))
-            
-            # If we still have missing cards
-            if still_missing > 0:
-                completely_missing_cards.append((card_name, still_missing))
-            
-            # If some cards are in other decks
-            if total_available_in_other_decks > 0:
-                deck_info = ", ".join([f"{deck_name} ({min(qty, missing_quantity)})" for deck_name, qty in in_other_decks])
-                partially_missing_cards.append((card_name, total_available_in_other_decks, deck_info))
+            if total_in_other_decks > 0:
+                # Track which decks have this card
+                used_decks = []
+                remaining_needed = missing_quantity
+                
+                # If we can get all we need from other decks
+                if total_in_other_decks >= missing_quantity:
+                    # Show the same missing_quantity for all decks
+                    for other_deck, qty in sorted(in_other_decks):
+                        # All decks show the same missing quantity
+                        cards_by_deck[other_deck].append((card_name, qty, missing_quantity))
+                        used_decks.append((other_deck, missing_quantity))
+                    
+                    # Record that we found the card in other decks
+                    deck_info = ", ".join([f"{deck_name} ({missing_quantity})" for deck_name, _ in used_decks])
+                    partially_missing_cards.append((card_name, missing_quantity, deck_info))
+                else:
+                    # We can't get all we need, so record what we can get
+                    for other_deck, qty in sorted(in_other_decks):
+                        cards_by_deck[other_deck].append((card_name, qty, qty))
+                        used_decks.append((other_deck, qty))
+                    
+                    # Record partial find and that some are still missing
+                    deck_info = ", ".join([f"{deck_name} ({qty})" for deck_name, qty in used_decks])
+                    partially_missing_cards.append((card_name, total_in_other_decks, deck_info))
+                    completely_missing_cards.append((card_name, missing_quantity - total_in_other_decks))
+            else:
+                # No copies in other decks
+                completely_missing_cards.append((card_name, missing_quantity))
             
             # If we have some but not enough
             if available_quantity > 0:
@@ -108,22 +123,26 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
         for card_name, missing_qty in sorted(completely_missing_cards, key=lambda x: x[0]):
             print(f"  {missing_qty} {card_name}")
     else:
-        print("All cards can be found in your collection or other decks!")
+        print("\nAll cards can be found in your collection or other decks!")
 
-    # Missing cards in other decks report
+    # Cards found in other decks report
     if partially_missing_cards:
-        total_in_other_decks = sum(qty for _, qty, _ in partially_missing_cards)
-        print(f"\nMissing cards available in other decks ({total_in_other_decks} total, {len(partially_missing_cards)} unique):")
-        for card_name, available_qty, deck_info in sorted(partially_missing_cards, key=lambda x: x[0]):
-            print(f"  {available_qty} {card_name} - [ {deck_info} ]")
+        total_from_others = sum(qty for _, qty, _ in partially_missing_cards)
+        print(f"\nCards available in other decks: {total_from_others} total ({len(partially_missing_cards)} unique)")
+        for card_name, qty, deck_info in sorted(partially_missing_cards, key=lambda x: x[0]):
+            print(f"  {qty} {card_name} - [ {deck_info} ]")
 
         # Report by deck
-        print("\nCards needed from each deck:")
+        print("\nCards by deck:")
         for deck_name, cards in sorted(cards_by_deck.items()):
-            # Calculate total cards available to take from this deck
-            total_available_in_deck = sum(min(qty_in_deck, missing_qty) for card_name, qty_in_deck, missing_qty in cards)
-            print(f"\n{deck_name} deck ({total_available_in_deck} cards available):")
-            for card_name, qty_in_deck, missing_qty in sorted(cards, key=lambda x: x[0]):
-                # Only show the quantity we can actually get from this deck
-                available_qty = min(qty_in_deck, missing_qty)
-                print(f"  {available_qty} {card_name}")
+            # Calculate total cards needed from this deck
+            total_needed_from_deck = sum(usable_qty for _, _, usable_qty in cards if usable_qty > 0)
+            print(f"\n{deck_name} deck ({total_needed_from_deck} cards needed):")
+            
+            # Show all cards in this deck, not just the ones with usable_qty > 0
+            for card_name, total_qty, usable_qty in sorted(cards, key=lambda x: x[0]):
+                if usable_qty > 0:
+                    print(f"  {usable_qty} {card_name}")
+                else:
+                    # Show cards that are in the deck but not needed
+                    print(f"  {usable_qty} {card_name}")
