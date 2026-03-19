@@ -1,9 +1,11 @@
-import pytest
-from unittest.mock import patch, MagicMock
-from mtg_utils.utils.moxfield_api import library_sort_key, get_deck_list, get_library
+from unittest.mock import MagicMock, patch
 
+import pytest
+
+from mtg_utils.utils.moxfield_api import get_deck_list, get_library, library_sort_key
 
 # --- library_sort_key ---
+
 
 @pytest.mark.unit
 def test_library_sort_key_normal_card():
@@ -36,10 +38,11 @@ def test_library_sort_key_all_snow_lands_in_group_1():
 def test_library_sort_key_snow_sorts_after_normal():
     normal = library_sort_key("1 Atraxa")
     snow = library_sort_key("1 Snow-Covered Island")
-    assert normal < snow
+    assert normal < snow  # pyright: ignore[reportOperatorIssue]
 
 
 # --- get_deck_list ---
+
 
 def _deck_response(mainboard_cards, commanders=None):
     mock = MagicMock()
@@ -54,10 +57,12 @@ def _deck_response(mainboard_cards, commanders=None):
 
 @pytest.mark.unit
 def test_get_deck_list_returns_cards():
-    response = _deck_response({
-        "a": {"quantity": 2, "card": {"name": "Lightning Bolt"}},
-        "b": {"quantity": 1, "card": {"name": "Island"}},
-    })
+    response = _deck_response(
+        {
+            "a": {"quantity": 2, "card": {"name": "Lightning Bolt"}},
+            "b": {"quantity": 1, "card": {"name": "Island"}},
+        }
+    )
     with patch("mtg_utils.utils.moxfield_api.scraper.get", return_value=response):
         result = get_deck_list("fake-id")
     assert "2 Lightning Bolt" in result
@@ -85,6 +90,7 @@ def test_get_deck_list_empty_deck():
 
 # --- get_library ---
 
+
 def _library_response(data, total_pages=1):
     mock = MagicMock()
     mock.json.return_value = {"totalPages": total_pages, "data": data}
@@ -93,10 +99,12 @@ def _library_response(data, total_pages=1):
 
 @pytest.mark.unit
 def test_get_library_single_page():
-    page = _library_response([
-        {"quantity": 3, "card": {"name": "Island"}},
-        {"quantity": 1, "card": {"name": "Forest"}},
-    ])
+    page = _library_response(
+        [
+            {"quantity": 3, "card": {"name": "Island"}},
+            {"quantity": 1, "card": {"name": "Forest"}},
+        ]
+    )
     with patch("mtg_utils.utils.moxfield_api.scraper.get", return_value=page):
         result = get_library("fake-binder")
     assert "3 Island" in result
@@ -105,10 +113,12 @@ def test_get_library_single_page():
 
 @pytest.mark.unit
 def test_get_library_aggregates_duplicate_card_names():
-    page = _library_response([
-        {"quantity": 2, "card": {"name": "Island"}},
-        {"quantity": 3, "card": {"name": "Island"}},
-    ])
+    page = _library_response(
+        [
+            {"quantity": 2, "card": {"name": "Island"}},
+            {"quantity": 3, "card": {"name": "Island"}},
+        ]
+    )
     with patch("mtg_utils.utils.moxfield_api.scraper.get", return_value=page):
         result = get_library("fake-binder")
     assert "5 Island" in result
@@ -127,10 +137,12 @@ def test_get_library_multi_page():
 
 @pytest.mark.unit
 def test_get_library_snow_lands_sorted_last():
-    page = _library_response([
-        {"quantity": 1, "card": {"name": "Snow-Covered Island"}},
-        {"quantity": 1, "card": {"name": "Atraxa, Praetors' Voice"}},
-    ])
+    page = _library_response(
+        [
+            {"quantity": 1, "card": {"name": "Snow-Covered Island"}},
+            {"quantity": 1, "card": {"name": "Atraxa, Praetors' Voice"}},
+        ]
+    )
     with patch("mtg_utils.utils.moxfield_api.scraper.get", return_value=page):
         result = get_library("fake-binder")
     # Atraxa (group 0) must come before Snow-Covered Island (group 1)
