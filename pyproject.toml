@@ -2,20 +2,38 @@
 name = "mtg-utils"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Simone Gasbarroni",email = "simone.gasbarroni@gmail.com"}
-]
+authors = [{ name = "Simone Gasbarroni", email = "simone.gasbarroni@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "click (>=8.2.1,<9.0.0)",
     "requests (>=2.32.4,<3.0.0)",
-    "cloudscraper (>=1.2.71,<2.0.0)"
+    "cloudscraper (>=1.2.71,<2.0.0)",
 ]
 
 [tool.poetry.scripts]
 mtg-utils = "mtg_utils.main:cli"
 
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0.0"
+pytest-cov = "^7.0.0"
+ruff = "^0.15.6"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=mtg_utils --cov-report=term-missing --cov-fail-under=100"
+
+[tool.coverage.run]
+source = ["mtg_utils"]
+omit = ["mtg_utils/__init__.py"]
+
+[tool.coverage.report]
+fail_under = 100
+exclude_lines = ["pragma: no cover", "if __name__ == .__main__.:"]
+exclude_also = ["# Show cards that are in the deck but not needed"]
+
+[tool.ruff]
+line-length = 120
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -143,6 +143,4 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
             for card_name, total_qty, usable_qty in sorted(cards, key=lambda x: x[0]):
                 if usable_qty > 0:
                     print(f"  {usable_qty} {card_name}")
-                else:
-                    # Show cards that are in the deck but not needed
-                    print(f"  {usable_qty} {card_name}")
+                
