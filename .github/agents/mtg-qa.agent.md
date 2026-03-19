@@ -1,5 +1,5 @@
 ---
-name: "`MTG QA`"
+name: "MTG QA"
 description: "Use when writing, fixing, or reviewing tests for mtg-utils Python code: unit tests for commands (update_card_library, check_missing_cards, compare_decks), utility functions (config, readers, moxfield_api), CLI integration tests, or edge cases in collection math and shared_decks logic. DO NOT use for feature implementation or data file changes."
 tools: [read, search, edit, execute]
 user-invocable: true

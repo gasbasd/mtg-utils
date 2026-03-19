@@ -1,4 +1,5 @@
 import json
+import pytest
 from unittest.mock import patch
 from click.testing import CliRunner
 from mtg_utils.main import cli
@@ -29,12 +30,15 @@ def _setup(tmp_path, available_cards, deck_cards_by_name=None):
 
 # --- validation errors (no files needed) ---
 
+@pytest.mark.integration
 def test_check_missing_no_options():
     result = CliRunner().invoke(cli, ["check-missing-cards"])
     assert result.exit_code == 0
     assert "Error: You must provide either" in result.output
 
 
+
+@pytest.mark.integration
 def test_check_missing_both_options(tmp_path):
     deck_file = tmp_path / "deck.txt"
     deck_file.write_text("1 Island\n")
@@ -47,6 +51,8 @@ def test_check_missing_both_options(tmp_path):
     assert "Error: Please provide only one" in result.output
 
 
+
+@pytest.mark.integration
 def test_check_missing_moxfield_id_not_found():
     with patch("mtg_utils.commands.check_missing_cards.get_deck_list", return_value=[]):
         result = CliRunner().invoke(cli, ["check-missing-cards", "--moxfield-id", "bad-id"])
@@ -56,6 +62,7 @@ def test_check_missing_moxfield_id_not_found():
 
 # --- happy path: all cards available ---
 
+@pytest.mark.integration
 def test_check_missing_all_available(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     deck_file = tmp_path / "target.txt"
@@ -71,6 +78,7 @@ def test_check_missing_all_available(tmp_path, monkeypatch):
 
 # --- some cards completely missing ---
 
+@pytest.mark.integration
 def test_check_missing_some_missing(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     deck_file = tmp_path / "target.txt"
@@ -88,6 +96,7 @@ def test_check_missing_some_missing(tmp_path, monkeypatch):
 
 # --- cards available in other configured decks ---
 
+@pytest.mark.integration
 def test_check_missing_cards_in_other_decks(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     deck_file = tmp_path / "target.txt"
@@ -110,6 +119,7 @@ def test_check_missing_cards_in_other_decks(tmp_path, monkeypatch):
 
 # --- partially sourced from other decks, remainder still missing ---
 
+@pytest.mark.integration
 def test_check_missing_partial_from_other_deck(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     deck_file = tmp_path / "target.txt"
@@ -129,6 +139,7 @@ def test_check_missing_partial_from_other_deck(tmp_path, monkeypatch):
 
 # --- via --moxfield-id (mocked) ---
 
+@pytest.mark.integration
 def test_check_missing_via_moxfield_id(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _setup(tmp_path, available_cards=["2 Island"])

@@ -4,6 +4,7 @@ import pytest
 from mtg_utils.utils.config import load_config
 
 
+@pytest.mark.unit
 def test_load_config_valid(tmp_path):
     cfg = {"binder_id": "abc", "decks": {}, "purchased_file": "purchased.txt"}
     f = tmp_path / "config.json"
@@ -11,6 +12,7 @@ def test_load_config_valid(tmp_path):
     assert load_config(str(f)) == cfg
 
 
+@pytest.mark.unit
 def test_load_config_creates_default_when_missing(tmp_path):
     cfg_path = str(tmp_path / "new_config.json")
     result = load_config(cfg_path)
@@ -19,6 +21,7 @@ def test_load_config_creates_default_when_missing(tmp_path):
     assert Path(cfg_path).exists()
 
 
+@pytest.mark.unit
 def test_load_config_default_has_expected_keys(tmp_path):
     cfg_path = str(tmp_path / "auto.json")
     result = load_config(cfg_path)
@@ -26,6 +29,7 @@ def test_load_config_default_has_expected_keys(tmp_path):
     assert isinstance(result["decks"], dict)
 
 
+@pytest.mark.unit
 def test_load_config_malformed_json(tmp_path):
     f = tmp_path / "bad.json"
     f.write_text("{ not valid json }")

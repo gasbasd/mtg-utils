@@ -1,21 +1,26 @@
+import pytest
 from unittest.mock import patch, MagicMock
 from mtg_utils.utils.moxfield_api import library_sort_key, get_deck_list, get_library
 
 
 # --- library_sort_key ---
 
+@pytest.mark.unit
 def test_library_sort_key_normal_card():
     assert library_sort_key("1 Lightning Bolt") == (0, "Lightning Bolt")
 
 
+@pytest.mark.unit
 def test_library_sort_key_normal_card_quantity_irrelevant():
     assert library_sort_key("4 Forest") == (0, "Forest")
 
 
+@pytest.mark.unit
 def test_library_sort_key_snow_covered_forest():
     assert library_sort_key("1 Snow-Covered Forest") == (1, "Snow-Covered Forest")
 
 
+@pytest.mark.unit
 def test_library_sort_key_all_snow_lands_in_group_1():
     for land in [
         "Snow-Covered Forest",
@@ -27,6 +32,7 @@ def test_library_sort_key_all_snow_lands_in_group_1():
         assert library_sort_key(f"2 {land}")[0] == 1
 
 
+@pytest.mark.unit
 def test_library_sort_key_snow_sorts_after_normal():
     normal = library_sort_key("1 Atraxa")
     snow = library_sort_key("1 Snow-Covered Island")
@@ -46,6 +52,7 @@ def _deck_response(mainboard_cards, commanders=None):
     return mock
 
 
+@pytest.mark.unit
 def test_get_deck_list_returns_cards():
     response = _deck_response({
         "a": {"quantity": 2, "card": {"name": "Lightning Bolt"}},
@@ -57,6 +64,7 @@ def test_get_deck_list_returns_cards():
     assert "1 Island" in result
 
 
+@pytest.mark.unit
 def test_get_deck_list_commander_inserted_first():
     response = _deck_response(
         mainboard_cards={"a": {"quantity": 1, "card": {"name": "Lightning Bolt"}}},
@@ -67,6 +75,7 @@ def test_get_deck_list_commander_inserted_first():
     assert result[0] == "1 Atraxa, Praetors' Voice"
 
 
+@pytest.mark.unit
 def test_get_deck_list_empty_deck():
     response = _deck_response(mainboard_cards={})
     with patch("mtg_utils.utils.moxfield_api.scraper.get", return_value=response):
@@ -82,6 +91,7 @@ def _library_response(data, total_pages=1):
     return mock
 
 
+@pytest.mark.unit
 def test_get_library_single_page():
     page = _library_response([
         {"quantity": 3, "card": {"name": "Island"}},
@@ -93,6 +103,7 @@ def test_get_library_single_page():
     assert "1 Forest" in result
 
 
+@pytest.mark.unit
 def test_get_library_aggregates_duplicate_card_names():
     page = _library_response([
         {"quantity": 2, "card": {"name": "Island"}},
@@ -104,6 +115,7 @@ def test_get_library_aggregates_duplicate_card_names():
     assert len(result) == 1
 
 
+@pytest.mark.unit
 def test_get_library_multi_page():
     page1 = _library_response([{"quantity": 1, "card": {"name": "Forest"}}], total_pages=2)
     page2 = _library_response([{"quantity": 2, "card": {"name": "Island"}}], total_pages=2)
@@ -113,6 +125,7 @@ def test_get_library_multi_page():
     assert "2 Island" in result
 
 
+@pytest.mark.unit
 def test_get_library_snow_lands_sorted_last():
     page = _library_response([
         {"quantity": 1, "card": {"name": "Snow-Covered Island"}},

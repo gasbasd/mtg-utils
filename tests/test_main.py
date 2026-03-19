@@ -1,7 +1,9 @@
+import pytest
 from click.testing import CliRunner
 from mtg_utils.main import cli
 
 
+@pytest.mark.integration
 def test_cli_debug_flag():
     """--debug flag should set logging to DEBUG (covers the `if debug:` branch in cli())."""
     result = CliRunner().invoke(cli, ["--debug", "check-missing-cards"])

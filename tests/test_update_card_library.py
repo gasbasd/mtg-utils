@@ -1,4 +1,5 @@
 import json
+import pytest
 from unittest.mock import patch
 from click.testing import CliRunner
 from mtg_utils.main import cli
@@ -27,6 +28,7 @@ def _run(tmp_path, library, deck_lists=None, extra_args=None):
 
 # --- owned cards written ---
 
+@pytest.mark.integration
 def test_update_library_writes_owned_cards(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _make_config(tmp_path)
@@ -41,6 +43,7 @@ def test_update_library_writes_owned_cards(tmp_path, monkeypatch):
 
 # --- available = owned minus deck ---
 
+@pytest.mark.integration
 def test_update_library_available_subtracts_deck(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _make_config(tmp_path, decks={"my_deck": {"file": "card_library/decks/my_deck.txt", "id": "d1"}})
@@ -55,6 +58,7 @@ def test_update_library_available_subtracts_deck(tmp_path, monkeypatch):
 
 # --- purchased file created when absent ---
 
+@pytest.mark.integration
 def test_update_library_creates_purchased_file(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _make_config(tmp_path)
@@ -67,6 +71,7 @@ def test_update_library_creates_purchased_file(tmp_path, monkeypatch):
 
 # --- purchased cards increase available count ---
 
+@pytest.mark.integration
 def test_update_library_purchased_cards_added(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _make_config(tmp_path)
@@ -82,6 +87,7 @@ def test_update_library_purchased_cards_added(tmp_path, monkeypatch):
 
 # --- warning when deck needs more than owned ---
 
+@pytest.mark.integration
 def test_update_library_warns_on_unavailable_cards(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _make_config(tmp_path, decks={"big": {"file": "card_library/decks/big.txt", "id": "d1"}})
@@ -94,6 +100,7 @@ def test_update_library_warns_on_unavailable_cards(tmp_path, monkeypatch):
 
 # --- deck file written from Moxfield response ---
 
+@pytest.mark.integration
 def test_update_library_deck_file_written(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _make_config(tmp_path, decks={"alpha": {"file": "card_library/decks/alpha.txt", "id": "d1"}})
@@ -107,6 +114,7 @@ def test_update_library_deck_file_written(tmp_path, monkeypatch):
 
 # --- shared_decks: child deck does not consume from pool ---
 
+@pytest.mark.integration
 def test_update_library_shared_decks_no_extra_consumption(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _make_config(tmp_path, decks={
@@ -134,6 +142,7 @@ def test_update_library_shared_decks_no_extra_consumption(tmp_path, monkeypatch)
 
 # --- shared_decks: warns when referenced deck does not exist ---
 
+@pytest.mark.integration
 def test_update_library_shared_deck_missing_reference_warns(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _make_config(tmp_path, decks={
@@ -152,6 +161,7 @@ def test_update_library_shared_deck_missing_reference_warns(tmp_path, monkeypatc
 
 # --- deck retrieval fails ---
 
+@pytest.mark.integration
 def test_update_library_deck_retrieval_fails(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _make_config(tmp_path, decks={"broken": {"file": "card_library/decks/broken.txt", "id": "d1"}})
@@ -164,6 +174,7 @@ def test_update_library_deck_retrieval_fails(tmp_path, monkeypatch):
 
 # --- purchased card not previously in library ---
 
+@pytest.mark.integration
 def test_update_library_purchased_card_not_in_library(tmp_path, monkeypatch):
     """Purchased card that doesn't exist in owned library gets added as new entry."""
     monkeypatch.chdir(tmp_path)
@@ -181,6 +192,7 @@ def test_update_library_purchased_card_not_in_library(tmp_path, monkeypatch):
 
 # --- warning includes sharing details and already-used info ---
 
+@pytest.mark.integration
 def test_update_library_unavailable_with_sharing_and_already_used(tmp_path, monkeypatch):
     """
     When a card is unavailable and the deck has shared_decks:
@@ -213,6 +225,7 @@ def test_update_library_unavailable_with_sharing_and_already_used(tmp_path, monk
 
 # --- same card consumed by two independent decks (used_cards +=) ---
 
+@pytest.mark.integration
 def test_update_library_same_card_in_multiple_decks(tmp_path, monkeypatch):
     """Second deck using the same card increments used_cards (the += branch)."""
     monkeypatch.chdir(tmp_path)
@@ -230,6 +243,7 @@ def test_update_library_same_card_in_multiple_decks(tmp_path, monkeypatch):
 
 # --- multiple shared_decks: no common card across shared decks ---
 
+@pytest.mark.integration
 def test_update_library_multiple_shared_decks_no_common(tmp_path, monkeypatch):
     """
     Child shares from two decks; no card is common to both shared decks.
@@ -266,6 +280,7 @@ def test_update_library_multiple_shared_decks_no_common(tmp_path, monkeypatch):
 
 # --- multiple shared_decks: common card in both shared decks ---
 
+@pytest.mark.integration
 def test_update_library_multiple_shared_decks_with_common(tmp_path, monkeypatch):
     """
     Child shares from two decks; Lightning Bolt is in BOTH shared decks.
@@ -300,6 +315,7 @@ def test_update_library_multiple_shared_decks_with_common(tmp_path, monkeypatch)
 
 # --- custom config file path ---
 
+@pytest.mark.integration
 def test_update_library_custom_config_file(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     cfg_path = tmp_path / "custom.json"

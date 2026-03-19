@@ -1,12 +1,14 @@
-.PHONY: test lint coverage all
+.PHONY: test lint coverage ci all
 
 test:
-	poetry run pytest -v
+	poetry run pytest -v -p no:cov
 
 lint:
 	poetry run ruff check mtg_utils tests
 
 coverage:
-	poetry run pytest --cov=mtg_utils --cov-report=term-missing --cov-report=html --cov-fail-under=100
+	poetry run pytest --cov-report=term-missing --cov-report=html
+
+ci: lint coverage
 
 all: lint coverage
