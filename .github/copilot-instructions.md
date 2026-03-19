@@ -7,10 +7,13 @@ Python CLI tool (Click + Poetry, Python ≥ 3.13) for managing Magic: The Gather
 ```sh
 poetry install          # install dependencies
 poetry run mtg-utils    # run the CLI
-poetry run pytest -v    # run all tests
+make test               # fast test run (no coverage) — for inner-loop dev
+make coverage           # full test run with coverage enforcement + HTML report
+make ci                 # lint + coverage — mirrors what GitHub Actions runs
+make lint               # ruff check only
 ```
 
-Tests pass on a clean checkout. Always run `poetry run pytest` after changes.
+Tests pass on a clean checkout. Always run `make coverage` (or `poetry run pytest`) after changes to confirm 100% coverage is maintained. CI runs on every push/PR via `.github/workflows/ci.yml`.
 
 ## Architecture
 
@@ -40,8 +43,10 @@ All external HTTP goes through `moxfield_api.py`. Mock it in tests with `unittes
 
 - Use `click.testing.CliRunner` for end-to-end CLI tests.
 - Use `tmp_path` for all file I/O; never write to real `card_library/` in tests.
+- Use the `repo` fixture from `tests/conftest.py` (chdir + `make_config` helper) for new CLI/filesystem tests.
 - Test files follow `tests/test_<module>.py` naming.
 - Mock network calls: `patch("mtg_utils.commands.<cmd>.get_deck_list", ...)`.
+- Mark tests: `@pytest.mark.unit` (pure logic) or `@pytest.mark.integration` (CLI + filesystem). Run a subset with `pytest -m unit` or `pytest -m integration`.
 
 ## Agents & Skills
 
@@ -50,5 +55,6 @@ All external HTTP goes through `moxfield_api.py`. Mock it in tests with `unittes
 | [MTG Library Maintainer](.github/agents/mtg-library-maintainer.agent.md) | Collection data, deck files, config, command implementation |
 | [MTG QA](.github/agents/mtg-qa.agent.md) | Write and run pytest tests only |
 | [MTG Orchestrator](.github/agents/mtg-orchestrator.agent.md) | End-to-end tasks spanning both implementation and tests |
+| [CI Engineer](.github/agents/ci-engineer.agent.md) | GitHub Actions workflows, Makefile CI targets |
 
 For feature work or bug fixes that need tests, prefer the **MTG Orchestrator** agent.

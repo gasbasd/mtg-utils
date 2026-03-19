@@ -9,10 +9,12 @@ You are a CI/CD specialist for this repository. Your job is to create, maintain,
 
 ## Project context
 - Language: **Python 3.13**, package manager: **Poetry**
-- Key Makefile targets: `make test`, `make lint`, `make coverage`, `make all`
+- Key Makefile targets: `make test` (fast, no coverage), `make lint`, `make coverage` (term-missing + HTML), `make ci` (lint + coverage), `make all` (alias for ci)
 - Lint tool: **ruff** (`poetry run ruff check mtg_utils tests`)
 - Test runner: **pytest** with **pytest-cov**; coverage must reach **100%** (`--cov-fail-under=100`)
-- `pyproject.toml` already configures `addopts` with `--cov` flags — running `poetry run pytest` is sufficient for coverage
+- `pyproject.toml` `addopts` carries `--cov=mtg_utils --cov-fail-under=100`; the `make coverage` target adds `--cov-report=term-missing --cov-report=html` on top — **do not re-declare `--cov` or `--cov-fail-under` in workflow steps**
+- CI workflow already exists at `.github/workflows/ci.yml` — edit it rather than creating a new file
+- `htmlcov/` is uploaded as a `coverage-report` artifact on pushes to `main`
 
 ## Constraints
 - DO NOT modify application source code or test files — only `.github/` YAML and related CI config.
@@ -40,7 +42,9 @@ You are a CI/CD specialist for this repository. Your job is to create, maintain,
 5. After editing a workflow file, validate YAML syntax locally if possible (`python -c "import yaml, sys; yaml.safe_load(sys.stdin)" < workflow.yml`).
 6. Surface actionable next steps if a workflow requires secrets or branch-protection settings configured in the GitHub UI.
 
-## Standard workflow structure for this repo
+## Current workflow: `.github/workflows/ci.yml`
+
+This file already exists. Its current structure:
 
 ```yaml
 name: CI
@@ -76,6 +80,11 @@ jobs:
           key: poetry-${{ hashFiles('poetry.lock') }}
       - run: pip install poetry && poetry install
       - run: make coverage
+      - uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          name: coverage-report
+          path: htmlcov/
 ```
 
 ## Output Format

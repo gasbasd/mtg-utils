@@ -45,7 +45,7 @@ Hand off to **CI Engineer** for:
 
 ### 5. Validate and report
 After both specialists complete:
-- Confirm tests pass (`poetry run pytest`)
+- Confirm tests pass (`make test` for fast check, or `make coverage` for the full gate)
 - Report what changed, what was tested, and any remaining gaps
 - Flag any ambiguity or follow-up the user should be aware of
 
