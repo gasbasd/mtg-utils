@@ -52,6 +52,7 @@ All external HTTP goes through `moxfield_api.py`. Mock it in tests with `unittes
 
 | Name | Purpose |
 |---|---|
+| [MTG Product Designer](.github/agents/mtg-product-designer.agent.md) | Feature design, user stories, acceptance criteria, CLI UX specs |
 | [MTG Library Maintainer](.github/agents/mtg-library-maintainer.agent.md) | Collection data, deck files, config, command implementation |
 | [MTG QA](.github/agents/mtg-qa.agent.md) | Write and run pytest tests only |
 | [MTG Orchestrator](.github/agents/mtg-orchestrator.agent.md) | End-to-end tasks spanning both implementation and tests |
