@@ -1,11 +1,13 @@
 import logging
 
 import click
+from rich.rule import Rule
 
 from mtg_utils.commands.check_missing_cards import check_missing_cards
 from mtg_utils.commands.compare_decks import compare_decks
 from mtg_utils.commands.list_decks import list_decks
 from mtg_utils.commands.update_card_library import update_card_library
+from mtg_utils.utils.console import console
 
 
 @click.group()
@@ -21,6 +23,7 @@ from mtg_utils.commands.update_card_library import update_card_library
 def cli(debug: bool = False):
     if debug:
         logging.basicConfig(level=logging.DEBUG)
+    console.print(Rule("[bold green]🃏  mtg-utils[/bold green]"))
 
 
 cli.add_command(compare_decks)

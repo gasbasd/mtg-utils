@@ -1,8 +1,13 @@
 from collections import defaultdict
 
 import click
+from rich.markup import escape
+from rich.panel import Panel
+from rich.rule import Rule
+from rich.table import Table
 
 from mtg_utils.utils.config import DEFAULT_CONFIG_FILE, load_config
+from mtg_utils.utils.console import console, err_console
 from mtg_utils.utils.moxfield_api import get_deck_list
 from mtg_utils.utils.readers import read_list
 
@@ -14,16 +19,16 @@ from mtg_utils.utils.readers import read_list
 def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_file: str) -> None:
     """Check for missing cards in a specified deck compared to available cards."""
     if not deck_file and not moxfield_id:
-        print("Error: You must provide either --deck-file or --moxfield-id.")
-        return
+        err_console.print("[red]Error: You must provide either --deck-file or --moxfield-id.[/red]")
+        raise SystemExit(1)
     if deck_file and moxfield_id:
-        print("Error: Please provide only one of --deck-file or --moxfield-id.")
-        return
+        err_console.print("[red]Error: Please provide only one of --deck-file or --moxfield-id.[/red]")
+        raise SystemExit(1)
     if moxfield_id:
         deck = get_deck_list(moxfield_id)
         if not deck:
-            print(f"Error: Could not retrieve deck with Moxfield ID {moxfield_id}.")
-            return
+            err_console.print(f"[red]Error: Could not retrieve deck with Moxfield ID {escape(moxfield_id)}.[/red]")
+            raise SystemExit(1)
     else:
         deck = read_list(deck_file)
     available_cards = read_list("card_library/available_cards.txt")
@@ -106,39 +111,66 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
             available_in_deck.append(f"{deck_quantity} {card_name}")
 
     # Display results
-    print(f"Total cards in deck: {sum(int(card.split(' ', 1)[0]) for card in deck)}")
+    total = sum(int(card.split(" ", 1)[0]) for card in deck)
+    console.print(Rule(f"[bold]Total cards in deck: {total}[/bold]"))
 
-    # Available cards report
+    # Available cards panel
     total_available_qty = sum(int(card.split(" ", 1)[0]) for card in available_in_deck)
-    print(f"\nAvailable cards: {total_available_qty} ({len(available_in_deck)} unique)")
     if available_in_deck:
-        for card in sorted(available_in_deck):
-            print(f"  {card}")
+        tbl = Table(box=None, show_header=False, padding=(0, 1, 0, 0))
+        tbl.add_column("qty", justify="right", style="dim")
+        tbl.add_column("name")
+        for entry in sorted(available_in_deck):
+            qty, name = entry.split(" ", 1)
+            tbl.add_row(qty, escape(name))
+        console.print(
+            Panel(
+                tbl, title=f"Available: {total_available_qty} ({len(available_in_deck)} unique)", border_style="green"
+            )
+        )
 
-    # Completely missing cards report
+    # Missing cards panel
     total_completely_missing = sum(qty for _, qty in completely_missing_cards)
     if completely_missing_cards:
-        print(f"\nMissing cards: {total_completely_missing} ({len(completely_missing_cards)} unique)")
+        tbl = Table(box=None, show_header=False, padding=(0, 1, 0, 0))
+        tbl.add_column("qty", justify="right", style="dim")
+        tbl.add_column("name", style="red")
         for card_name, missing_qty in sorted(completely_missing_cards, key=lambda x: x[0]):
-            print(f"  {missing_qty} {card_name}")
+            tbl.add_row(str(missing_qty), escape(card_name))
+        console.print(
+            Panel(
+                tbl,
+                title=f"Missing: {total_completely_missing} ({len(completely_missing_cards)} unique)",
+                border_style="red",
+            )
+        )
     else:
-        print("\nAll cards can be found in your collection or other decks!")
+        console.print(Panel("[green]✓ All cards available![/green]", border_style="green"))
 
-    # Cards found in other decks report
+    # Cards in other decks panel
     if partially_missing_cards:
         total_from_others = sum(qty for _, qty, _ in partially_missing_cards)
-        print(f"\nCards available in other decks: {total_from_others} total ({len(partially_missing_cards)} unique)")
+        tbl = Table(box=None, show_header=False, padding=(0, 1, 0, 0))
+        tbl.add_column("qty", justify="right", style="dim")
+        tbl.add_column("name")
+        tbl.add_column("decks", style="dim")
         for card_name, qty, deck_info in sorted(partially_missing_cards, key=lambda x: x[0]):
-            print(f"  {qty} {card_name} - [ {deck_info} ]")
+            tbl.add_row(str(qty), escape(card_name), f"[{escape(deck_info)}]")
+        console.print(
+            Panel(
+                tbl,
+                title=f"In other decks: {total_from_others} ({len(partially_missing_cards)} unique)",
+                border_style="yellow",
+            )
+        )
 
-        # Report by deck
-        print("\nCards by deck:")
+        # Per-deck breakdown panels
         for deck_name, cards in sorted(cards_by_deck.items()):
-            # Calculate total cards needed from this deck
-            total_needed_from_deck = sum(usable_qty for _, _, usable_qty in cards if usable_qty > 0)
-            print(f"\n{deck_name} deck ({total_needed_from_deck} cards needed):")
-
-            # Show all cards in this deck, not just the ones with usable_qty > 0
+            total_needed = sum(usable_qty for _, _, usable_qty in cards if usable_qty > 0)
+            tbl = Table(box=None, show_header=False, padding=(0, 1, 0, 0))
+            tbl.add_column("qty", justify="right", style="dim")
+            tbl.add_column("name")
             for card_name, total_qty, usable_qty in sorted(cards, key=lambda x: x[0]):
                 if usable_qty > 0:
-                    print(f"  {usable_qty} {card_name}")
+                    tbl.add_row(str(usable_qty), escape(card_name))
+            console.print(Panel(tbl, title=f"{escape(deck_name)} — {total_needed} cards needed", border_style="dim"))

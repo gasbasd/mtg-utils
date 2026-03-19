@@ -17,12 +17,19 @@ def test_list_decks_sorted_output(repo):
     )
     result = CliRunner().invoke(cli, ["list-decks"])
     assert result.exit_code == 0
-    lines = result.output.splitlines()
-    assert lines == [
-        "alpha\tcard_library/decks/alpha.txt",
-        "middle\tcard_library/decks/middle.txt",
-        "zebra\tcard_library/decks/zebra.txt",
-    ]
+    output = result.output
+    # Header row is present
+    assert "Alias" in output
+    assert "File" in output
+    # All decks appear in output
+    assert "alpha" in output
+    assert "middle" in output
+    assert "zebra" in output
+    assert "card_library/decks/alpha.txt" in output
+    assert "card_library/decks/middle.txt" in output
+    assert "card_library/decks/zebra.txt" in output
+    # Sorted: alpha before middle before zebra
+    assert output.index("alpha") < output.index("middle") < output.index("zebra")
 
 
 @pytest.mark.integration
@@ -30,7 +37,8 @@ def test_list_decks_empty_decks(repo):
     repo(decks={})
     result = CliRunner().invoke(cli, ["list-decks"])
     assert result.exit_code == 0
-    assert result.output == ""
+    # With empty decks, list_decks returns early — no table content
+    assert "Alias" not in result.output
 
 
 @pytest.mark.integration
@@ -58,4 +66,5 @@ def test_list_decks_custom_config_file(tmp_path, monkeypatch):
     custom_config.write_text(json.dumps(config))
     result = CliRunner().invoke(cli, ["list-decks", "--config-file", str(custom_config)])
     assert result.exit_code == 0
-    assert result.output == "my_deck\tcard_library/decks/my_deck.txt\n"
+    assert "my_deck" in result.output
+    assert "card_library/decks/my_deck.txt" in result.output

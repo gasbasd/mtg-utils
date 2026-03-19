@@ -1,5 +1,6 @@
 import pytest
 from click.testing import CliRunner
+
 from mtg_utils.main import cli
 
 
@@ -14,10 +15,11 @@ def test_compare_decks_no_overlap(tmp_path):
     _write(d2, ["1 Forest"])
     result = CliRunner().invoke(cli, ["compare-decks", "--deck1-file", str(d1), "--deck2-file", str(d2)])
     assert result.exit_code == 0
-    assert "Cards in common: 0 (0 unique)" in result.output
+    # With no overlap, the common-cards panel is not printed
+    assert "Cards in common" not in result.output
+    assert "Only in" in result.output
     assert "Lightning Bolt" in result.output
     assert "Forest" in result.output
-
 
 
 @pytest.mark.integration
@@ -30,7 +32,6 @@ def test_compare_decks_identical_decks(tmp_path):
     assert "Cards in common: 3 (2 unique)" in result.output
 
 
-
 @pytest.mark.integration
 def test_compare_decks_partial_quantity_overlap(tmp_path):
     d1, d2 = tmp_path / "d1.txt", tmp_path / "d2.txt"
@@ -40,8 +41,7 @@ def test_compare_decks_partial_quantity_overlap(tmp_path):
     assert result.exit_code == 0
     # 2 shared, 1 only in d1
     assert "Cards in common: 2 (1 unique)" in result.output
-    assert "1 Lightning Bolt" in result.output   # the excess
-
+    assert "1 Lightning Bolt" in result.output  # the excess
 
 
 @pytest.mark.integration
@@ -55,7 +55,6 @@ def test_compare_decks_mixed(tmp_path):
     assert "Lightning Bolt" in result.output
     assert "Island" in result.output
     assert "Forest" in result.output
-
 
 
 @pytest.mark.integration

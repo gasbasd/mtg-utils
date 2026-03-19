@@ -1,7 +1,9 @@
 import json
-import pytest
 from unittest.mock import patch
+
+import pytest
 from click.testing import CliRunner
+
 from mtg_utils.main import cli
 
 
@@ -30,37 +32,42 @@ def _setup(tmp_path, available_cards, deck_cards_by_name=None):
 
 # --- validation errors (no files needed) ---
 
+
 @pytest.mark.integration
 def test_check_missing_no_options():
     result = CliRunner().invoke(cli, ["check-missing-cards"])
-    assert result.exit_code == 0
+    assert result.exit_code == 1
     assert "Error: You must provide either" in result.output
-
 
 
 @pytest.mark.integration
 def test_check_missing_both_options(tmp_path):
     deck_file = tmp_path / "deck.txt"
     deck_file.write_text("1 Island\n")
-    result = CliRunner().invoke(cli, [
-        "check-missing-cards",
-        "--deck-file", str(deck_file),
-        "--moxfield-id", "fake-id",
-    ])
-    assert result.exit_code == 0
+    result = CliRunner().invoke(
+        cli,
+        [
+            "check-missing-cards",
+            "--deck-file",
+            str(deck_file),
+            "--moxfield-id",
+            "fake-id",
+        ],
+    )
+    assert result.exit_code == 1
     assert "Error: Please provide only one" in result.output
-
 
 
 @pytest.mark.integration
 def test_check_missing_moxfield_id_not_found():
     with patch("mtg_utils.commands.check_missing_cards.get_deck_list", return_value=[]):
         result = CliRunner().invoke(cli, ["check-missing-cards", "--moxfield-id", "bad-id"])
-    assert result.exit_code == 0
+    assert result.exit_code == 1
     assert "Could not retrieve deck" in result.output
 
 
 # --- happy path: all cards available ---
+
 
 @pytest.mark.integration
 def test_check_missing_all_available(tmp_path, monkeypatch):
@@ -73,10 +80,11 @@ def test_check_missing_all_available(tmp_path, monkeypatch):
 
     assert result.exit_code == 0
     assert "Total cards in deck: 3" in result.output
-    assert "All cards can be found" in result.output
+    assert "All cards available" in result.output
 
 
 # --- some cards completely missing ---
+
 
 @pytest.mark.integration
 def test_check_missing_some_missing(tmp_path, monkeypatch):
@@ -88,13 +96,14 @@ def test_check_missing_some_missing(tmp_path, monkeypatch):
     result = CliRunner().invoke(cli, ["check-missing-cards", "--deck-file", str(deck_file)])
 
     assert result.exit_code == 0
-    assert "Missing cards:" in result.output
+    assert "Missing:" in result.output
     assert "Lightning Bolt" in result.output
-    # "All cards can be found" must NOT appear
-    assert "All cards can be found" not in result.output
+    # "All cards available" must NOT appear
+    assert "All cards available" not in result.output
 
 
 # --- cards available in other configured decks ---
+
 
 @pytest.mark.integration
 def test_check_missing_cards_in_other_decks(tmp_path, monkeypatch):
@@ -110,14 +119,15 @@ def test_check_missing_cards_in_other_decks(tmp_path, monkeypatch):
     result = CliRunner().invoke(cli, ["check-missing-cards", "--deck-file", str(deck_file)])
 
     assert result.exit_code == 0
-    assert "Cards available in other decks" in result.output
+    assert "In other decks" in result.output
     assert "Lightning Bolt" in result.output
     assert "other_deck" in result.output
     # Completely missing section must not appear (card is sourced from other deck)
-    assert "All cards can be found" in result.output
+    assert "All cards available" in result.output
 
 
 # --- partially sourced from other decks, remainder still missing ---
+
 
 @pytest.mark.integration
 def test_check_missing_partial_from_other_deck(tmp_path, monkeypatch):
@@ -133,11 +143,12 @@ def test_check_missing_partial_from_other_deck(tmp_path, monkeypatch):
     result = CliRunner().invoke(cli, ["check-missing-cards", "--deck-file", str(deck_file)])
 
     assert result.exit_code == 0
-    assert "Missing cards:" in result.output
-    assert "Cards available in other decks" in result.output
+    assert "Missing:" in result.output
+    assert "In other decks" in result.output
 
 
 # --- via --moxfield-id (mocked) ---
+
 
 @pytest.mark.integration
 def test_check_missing_via_moxfield_id(tmp_path, monkeypatch):
@@ -149,4 +160,4 @@ def test_check_missing_via_moxfield_id(tmp_path, monkeypatch):
 
     assert result.exit_code == 0
     assert "Total cards in deck: 1" in result.output
-    assert "All cards can be found" in result.output
+    assert "All cards available" in result.output

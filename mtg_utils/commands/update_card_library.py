@@ -2,30 +2,14 @@ import os
 from collections import Counter
 
 import click
+from rich.markup import escape
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
 
 from mtg_utils.utils.config import DEFAULT_CONFIG_FILE, load_config
+from mtg_utils.utils.console import console, err_console
 from mtg_utils.utils.moxfield_api import get_deck_list, get_library, library_sort_key
 from mtg_utils.utils.readers import read_list
-
-
-def _update_built_decks(config) -> list[tuple[str, list[str], dict]]:
-    """Returns list of tuples: (deck_name, card_list, deck_config)"""
-    decks = []
-    for deck_name, deck_info in config["decks"].items():
-        deck = get_deck_list(deck_info["id"])
-        if deck:
-            decks.append((deck_name, deck, deck_info))
-
-            # Ensure directory exists
-            os.makedirs(os.path.dirname(deck_info["file"]), exist_ok=True)
-
-            with open(deck_info["file"], mode="w") as file:
-                for card in deck:
-                    file.write(f"{card}\n")
-            print(f"Updated {deck_name} deck: {deck_info['file']}")
-        else:
-            print(f"Failed to retrieve {deck_name} deck from Moxfield.")
-    return decks
 
 
 def _update_owned_cards(binder_id) -> list[str]:
@@ -37,7 +21,7 @@ def _update_owned_cards(binder_id) -> list[str]:
     with open("card_library/owned_cards.txt", "w") as file:
         for card in owned_cards:
             file.write(f"{card}\n")
-    print("Updated owned cards: card_library/owned_cards.txt")
+    console.print("[green]✓[/green] Updated owned cards: card_library/owned_cards.txt")
     return owned_cards
 
 
@@ -46,7 +30,7 @@ def _process_purchased_cards(config) -> list[str]:
 
     # Check if purchased.txt exists
     if not os.path.exists(path=purchased_file):
-        print(f"Creating empty purchased cards file at {purchased_file}")
+        console.print(f"[green]✓[/green] Creating empty purchased cards file at {escape(purchased_file)}")
         # Ensure directory exists
         os.makedirs(os.path.dirname(purchased_file), exist_ok=True)
         # Create empty file
@@ -62,7 +46,9 @@ def _process_purchased_cards(config) -> list[str]:
         for card in sorted(purchased_cards):
             file.write(f"{card}\n")
 
-    print(f"Processed purchased cards: {len(purchased_cards)} unique cards from {len(raw_cards)} total entries")
+    console.print(
+        f"[green]✓[/green] Processed purchased cards: {len(purchased_cards)} unique cards from {len(raw_cards)} total entries"
+    )
     return purchased_cards
 
 
@@ -118,7 +104,9 @@ def _calculate_available_cards(
         # Validate shared_decks
         for shared_deck_name in shared_decks:
             if shared_deck_name not in deck_cards:
-                print(f"WARNING: Deck '{deck_name}' references non-existent shared deck '{shared_deck_name}'")
+                err_console.print(
+                    f"[yellow]⚠[/yellow] WARNING: Deck '{escape(deck_name)}' references non-existent shared deck '{escape(shared_deck_name)}'"
+                )
 
         for card_entry in deck:
             parts = card_entry.split(" ", 1)
@@ -170,16 +158,18 @@ def _calculate_available_cards(
 
     # Print warnings for unavailable cards
     if unavailable_cards:
-        print("\nWARNING: Some cards in decks are not available in the available cards:")
+        err_console.print(
+            "[yellow]⚠[/yellow] WARNING: Some cards in decks are not available in the available cards:",
+        )
         for deck_name, cards in unavailable_cards.items():
-            print(f"\n  {deck_name} deck is missing:")
+            err_console.print(f"\n  {escape(deck_name)} deck is missing:")
             for card in cards:
-                print(f"    - {card}")
+                err_console.print(f"    - {escape(card)}")
 
     # Show shared decks information for all decks that have shared_decks configured
     decks_with_sharing = [(name, cfg) for name, cfg in deck_configs.items() if cfg.get("shared_decks")]
     if decks_with_sharing:
-        print("\nShared decks configuration:")
+        console.print("\nShared decks configuration:")
         for deck_name, deck_config in decks_with_sharing:
             shared_decks = deck_config.get("shared_decks", [])
             current_deck_cards = deck_cards[deck_name]
@@ -212,17 +202,19 @@ def _calculate_available_cards(
                     for card, decks_list in shared_cards_info.items()
                 )
 
-                print(f"\n  {deck_name} (sharing from: {', '.join(shared_decks)}) - {total_shared} shared cards total:")
+                console.print(
+                    f"\n  {escape(deck_name)} (sharing from: {escape(', '.join(shared_decks))}) - {total_shared} shared cards total:"
+                )
 
                 # Show only cards that are in multiple shared decks
                 if common_shared_cards:
                     common_count = sum(current_deck_cards[card] for card in common_shared_cards.keys())
-                    print(f"    Common across shared decks ({common_count} cards):")
+                    console.print(f"    Common across shared decks ({common_count} cards):")
                     for card_name in sorted(common_shared_cards.keys()):
                         quantity_in_current = current_deck_cards[card_name]
-                        print(f"      - {quantity_in_current} {card_name}")
+                        console.print(f"      - {quantity_in_current} {escape(card_name)}")
                 else:
-                    print("    (no cards common across all shared decks)")
+                    console.print("    (no cards common across all shared decks)")
 
                 # Show breakdown for each individual shared deck (exclusive cards only)
                 for shared_deck_name in shared_decks:
@@ -241,11 +233,11 @@ def _calculate_available_cards(
                                     exclusive_cards.append(card_name)
 
                         if exclusive_cards:
-                            print(f"    {shared_deck_name} ({len(exclusive_cards)} exclusive cards):")
+                            console.print(f"    {escape(shared_deck_name)} ({len(exclusive_cards)} exclusive cards):")
                             for card_name in exclusive_cards:
-                                print(f"      - {current_deck_cards[card_name]} {card_name}")
+                                console.print(f"      - {current_deck_cards[card_name]} {escape(card_name)}")
                         else:
-                            print(f"      {shared_deck_name} (0 exclusive cards)")
+                            console.print(f"      {escape(shared_deck_name)} (0 exclusive cards)")
             else:
                 # Single shared deck - show all shared cards
                 total_shared = sum(
@@ -253,10 +245,12 @@ def _calculate_available_cards(
                     for card, decks_list in shared_cards_info.items()
                 )
 
-                print(f"\n  {deck_name} (sharing from: {', '.join(shared_decks)}) - {total_shared} shared cards:")
+                console.print(
+                    f"\n  {escape(deck_name)} (sharing from: {escape(', '.join(shared_decks))}) - {total_shared} shared cards:"
+                )
                 for card_name in sorted(shared_cards_info.keys()):
                     quantity_in_current = current_deck_cards[card_name]
-                    print(f"    - {quantity_in_current} {card_name}")
+                    console.print(f"    - {quantity_in_current} {escape(card_name)}")
 
     # Calculate available cards
     available_dict = {}
@@ -273,7 +267,7 @@ def _calculate_available_cards(
     with open("card_library/available_cards.txt", "w") as file:
         for card in available_cards:
             file.write(f"{card}\n")
-    print("Updated available cards: card_library/available_cards.txt")
+    console.print("[green]✓[/green] Updated available cards: card_library/available_cards.txt")
     return available_cards
 
 
@@ -283,7 +277,38 @@ def update_card_library(config_file) -> None:
     """Update the card library with built decks and owned cards."""
 
     config = load_config(config_file=config_file)
-    decks = _update_built_decks(config=config)
+
+    # Fetch all decks with a progress spinner
+    results = []
+    with Progress(SpinnerColumn(), TextColumn("{task.description}"), console=console, transient=True) as progress:
+        for deck_name, deck_info in config["decks"].items():
+            task = progress.add_task(f"Fetching [bold]{escape(deck_name)}[/bold]\u2026", total=None)
+            deck = get_deck_list(deck_info["id"])
+            progress.remove_task(task)
+            if deck:
+                os.makedirs(os.path.dirname(deck_info["file"]), exist_ok=True)
+                with open(deck_info["file"], mode="w") as file:
+                    for card in deck:
+                        file.write(f"{card}\n")
+                results.append((deck_name, True, deck_info["file"], deck, deck_info))
+            else:
+                err_console.print(
+                    f"[yellow]⚠[/yellow] Failed to retrieve [bold]{escape(deck_name)}[/bold] deck from Moxfield."
+                )
+                results.append((deck_name, False, "\u2014", [], deck_info))
+
+    # Print summary table
+    tbl = Table(box=None, show_header=True, header_style="bold")
+    tbl.add_column("Deck")
+    tbl.add_column("Status")
+    tbl.add_column("File")
+    for name, ok, path, _, _ in results:
+        tbl.add_row(name, "[green]✓[/green]" if ok else "[red]✗ failed[/red]", path)
+    console.print(tbl)
+
+    # Build structured deck data for downstream use
+    decks = [(name, deck, info) for name, ok, _, deck, info in results if ok]
+
     owned_cards = _update_owned_cards(binder_id=config["binder_id"])
     purchased_cards = _process_purchased_cards(config=config)
 
