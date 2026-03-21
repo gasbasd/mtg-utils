@@ -7,7 +7,7 @@ lint:
 	poetry run ruff check mtg_utils tests
 
 coverage:
-	poetry run pytest --cov-report=term-missing --cov-report=html
+	poetry run pytest --cov=mtg_utils --cov-report=term-missing --cov-report=html
 
 ci: lint coverage
 

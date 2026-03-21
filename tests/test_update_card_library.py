@@ -1,7 +1,9 @@
 import json
-import pytest
 from unittest.mock import patch
+
+import pytest
 from click.testing import CliRunner
+
 from mtg_utils.main import cli
 
 
@@ -28,6 +30,7 @@ def _run(tmp_path, library, deck_lists=None, extra_args=None):
 
 # --- owned cards written ---
 
+
 @pytest.mark.integration
 def test_update_library_writes_owned_cards(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
@@ -43,6 +46,7 @@ def test_update_library_writes_owned_cards(tmp_path, monkeypatch):
 
 # --- available = owned minus deck ---
 
+
 @pytest.mark.integration
 def test_update_library_available_subtracts_deck(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
@@ -52,11 +56,12 @@ def test_update_library_available_subtracts_deck(tmp_path, monkeypatch):
 
     assert result.exit_code == 0
     available = (tmp_path / "card_library" / "available_cards.txt").read_text()
-    assert "2 Island" in available   # 3 owned - 1 in deck = 2
-    assert "2 Forest" in available   # untouched
+    assert "2 Island" in available  # 3 owned - 1 in deck = 2
+    assert "2 Forest" in available  # untouched
 
 
 # --- purchased file created when absent ---
+
 
 @pytest.mark.integration
 def test_update_library_creates_purchased_file(tmp_path, monkeypatch):
@@ -71,6 +76,7 @@ def test_update_library_creates_purchased_file(tmp_path, monkeypatch):
 
 # --- purchased cards increase available count ---
 
+
 @pytest.mark.integration
 def test_update_library_purchased_cards_added(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
@@ -82,10 +88,11 @@ def test_update_library_purchased_cards_added(tmp_path, monkeypatch):
 
     assert result.exit_code == 0
     available = (tmp_path / "card_library" / "available_cards.txt").read_text()
-    assert "4 Island" in available   # 2 owned + 2 purchased
+    assert "4 Island" in available  # 2 owned + 2 purchased
 
 
 # --- warning when deck needs more than owned ---
+
 
 @pytest.mark.integration
 def test_update_library_warns_on_unavailable_cards(tmp_path, monkeypatch):
@@ -99,6 +106,7 @@ def test_update_library_warns_on_unavailable_cards(tmp_path, monkeypatch):
 
 
 # --- deck file written from Moxfield response ---
+
 
 @pytest.mark.integration
 def test_update_library_deck_file_written(tmp_path, monkeypatch):
@@ -114,17 +122,21 @@ def test_update_library_deck_file_written(tmp_path, monkeypatch):
 
 # --- shared_decks: child deck does not consume from pool ---
 
+
 @pytest.mark.integration
 def test_update_library_shared_decks_no_extra_consumption(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _make_config(tmp_path, decks={
-        "base": {"file": "card_library/decks/base.txt", "id": "base-id"},
-        "child": {
-            "file": "card_library/decks/child.txt",
-            "id": "child-id",
-            "shared_decks": ["base"],
+    _make_config(
+        tmp_path,
+        decks={
+            "base": {"file": "card_library/decks/base.txt", "id": "base-id"},
+            "child": {
+                "file": "card_library/decks/child.txt",
+                "id": "child-id",
+                "shared_decks": ["base"],
+            },
         },
-    })
+    )
 
     # Both decks need 1 Lightning Bolt; owned = 2.
     # Without sharing: 2 - 1 - 1 = 0 available.
@@ -142,16 +154,20 @@ def test_update_library_shared_decks_no_extra_consumption(tmp_path, monkeypatch)
 
 # --- shared_decks: warns when referenced deck does not exist ---
 
+
 @pytest.mark.integration
 def test_update_library_shared_deck_missing_reference_warns(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _make_config(tmp_path, decks={
-        "child": {
-            "file": "card_library/decks/child.txt",
-            "id": "child-id",
-            "shared_decks": ["nonexistent"],
+    _make_config(
+        tmp_path,
+        decks={
+            "child": {
+                "file": "card_library/decks/child.txt",
+                "id": "child-id",
+                "shared_decks": ["nonexistent"],
+            },
         },
-    })
+    )
 
     result = _run(tmp_path, library=["1 Island"], deck_lists=[["1 Island"]])
 
@@ -160,6 +176,7 @@ def test_update_library_shared_deck_missing_reference_warns(tmp_path, monkeypatc
 
 
 # --- deck retrieval fails ---
+
 
 @pytest.mark.integration
 def test_update_library_deck_retrieval_fails(tmp_path, monkeypatch):
@@ -173,6 +190,7 @@ def test_update_library_deck_retrieval_fails(tmp_path, monkeypatch):
 
 
 # --- purchased card not previously in library ---
+
 
 @pytest.mark.integration
 def test_update_library_purchased_card_not_in_library(tmp_path, monkeypatch):
@@ -192,6 +210,7 @@ def test_update_library_purchased_card_not_in_library(tmp_path, monkeypatch):
 
 # --- warning includes sharing details and already-used info ---
 
+
 @pytest.mark.integration
 def test_update_library_unavailable_with_sharing_and_already_used(tmp_path, monkeypatch):
     """
@@ -202,14 +221,17 @@ def test_update_library_unavailable_with_sharing_and_already_used(tmp_path, monk
     'child' needs 3 sharing from 'base' (shared=1, consume=2, available=-1 < 2).
     """
     monkeypatch.chdir(tmp_path)
-    _make_config(tmp_path, decks={
-        "base": {"file": "card_library/decks/base.txt", "id": "base-id"},
-        "child": {
-            "file": "card_library/decks/child.txt",
-            "id": "child-id",
-            "shared_decks": ["base"],
+    _make_config(
+        tmp_path,
+        decks={
+            "base": {"file": "card_library/decks/base.txt", "id": "base-id"},
+            "child": {
+                "file": "card_library/decks/child.txt",
+                "id": "child-id",
+                "shared_decks": ["base"],
+            },
         },
-    })
+    )
 
     result = _run(
         tmp_path,
@@ -225,14 +247,18 @@ def test_update_library_unavailable_with_sharing_and_already_used(tmp_path, monk
 
 # --- same card consumed by two independent decks (used_cards +=) ---
 
+
 @pytest.mark.integration
 def test_update_library_same_card_in_multiple_decks(tmp_path, monkeypatch):
     """Second deck using the same card increments used_cards (the += branch)."""
     monkeypatch.chdir(tmp_path)
-    _make_config(tmp_path, decks={
-        "alpha": {"file": "card_library/decks/alpha.txt", "id": "a1"},
-        "beta": {"file": "card_library/decks/beta.txt", "id": "b1"},
-    })
+    _make_config(
+        tmp_path,
+        decks={
+            "alpha": {"file": "card_library/decks/alpha.txt", "id": "a1"},
+            "beta": {"file": "card_library/decks/beta.txt", "id": "b1"},
+        },
+    )
 
     result = _run(tmp_path, library=["4 Island"], deck_lists=[["1 Island"], ["1 Island"]])
 
@@ -243,6 +269,7 @@ def test_update_library_same_card_in_multiple_decks(tmp_path, monkeypatch):
 
 # --- multiple shared_decks: no common card across shared decks ---
 
+
 @pytest.mark.integration
 def test_update_library_multiple_shared_decks_no_common(tmp_path, monkeypatch):
     """
@@ -251,23 +278,26 @@ def test_update_library_multiple_shared_decks_no_common(tmp_path, monkeypatch):
             exclusive-cards per shared deck, and '0 exclusive cards' for empty deck.
     """
     monkeypatch.chdir(tmp_path)
-    _make_config(tmp_path, decks={
-        "alpha": {"file": "card_library/decks/alpha.txt", "id": "a1"},
-        "gamma": {"file": "card_library/decks/gamma.txt", "id": "g1"},
-        "child": {
-            "file": "card_library/decks/child.txt",
-            "id": "c1",
-            "shared_decks": ["alpha", "gamma"],
+    _make_config(
+        tmp_path,
+        decks={
+            "alpha": {"file": "card_library/decks/alpha.txt", "id": "a1"},
+            "gamma": {"file": "card_library/decks/gamma.txt", "id": "g1"},
+            "child": {
+                "file": "card_library/decks/child.txt",
+                "id": "c1",
+                "shared_decks": ["alpha", "gamma"],
+            },
         },
-    })
+    )
 
     result = _run(
         tmp_path,
-        library=["3 Lightning Bolt", "1 Forest"],
+        library=["1 Lightning Bolt", "1 Forest"],
         deck_lists=[
-            ["1 Lightning Bolt"],  # alpha
-            ["1 Forest"],          # gamma (Forest not in child)
-            ["1 Lightning Bolt"],  # child
+            ["1 Lightning Bolt"],  # alpha — consumes the only library copy
+            ["1 Forest"],  # gamma (Forest not in child)
+            ["1 Lightning Bolt"],  # child — must share LB from alpha
         ],
     )
 
@@ -275,10 +305,12 @@ def test_update_library_multiple_shared_decks_no_common(tmp_path, monkeypatch):
     assert "sharing from: alpha, gamma" in result.output
     assert "no cards common across all shared decks" in result.output
     assert "alpha" in result.output
+    assert "exclusive cards" in result.output  # alpha has 1 exclusive card (Lightning Bolt)
     assert "0 exclusive cards" in result.output  # gamma has no cards matching child
 
 
 # --- multiple shared_decks: common card in both shared decks ---
+
 
 @pytest.mark.integration
 def test_update_library_multiple_shared_decks_with_common(tmp_path, monkeypatch):
@@ -287,15 +319,18 @@ def test_update_library_multiple_shared_decks_with_common(tmp_path, monkeypatch)
     Covers the 'Common across shared decks' display branch.
     """
     monkeypatch.chdir(tmp_path)
-    _make_config(tmp_path, decks={
-        "alpha": {"file": "card_library/decks/alpha.txt", "id": "a1"},
-        "beta": {"file": "card_library/decks/beta.txt", "id": "b1"},
-        "child": {
-            "file": "card_library/decks/child.txt",
-            "id": "c1",
-            "shared_decks": ["alpha", "beta"],
+    _make_config(
+        tmp_path,
+        decks={
+            "alpha": {"file": "card_library/decks/alpha.txt", "id": "a1"},
+            "beta": {"file": "card_library/decks/beta.txt", "id": "b1"},
+            "child": {
+                "file": "card_library/decks/child.txt",
+                "id": "c1",
+                "shared_decks": ["alpha", "beta"],
+            },
         },
-    })
+    )
 
     result = _run(
         tmp_path,
@@ -303,7 +338,7 @@ def test_update_library_multiple_shared_decks_with_common(tmp_path, monkeypatch)
         deck_lists=[
             ["1 Lightning Bolt"],  # alpha
             ["1 Lightning Bolt"],  # beta
-            ["1 Lightning Bolt"],  # child
+            ["1 Lightning Bolt"],  # child — library has enough, sharing not needed
         ],
     )
 
@@ -311,19 +346,26 @@ def test_update_library_multiple_shared_decks_with_common(tmp_path, monkeypatch)
     assert "sharing from: alpha, beta" in result.output
     assert "Common across shared decks" in result.output
     assert "Lightning Bolt" in result.output
+    assert "available in library" in result.output  # card is available, no sharing needed
+    assert "available in library" in result.output  # card is available, no sharing needed
 
 
 # --- custom config file path ---
+
 
 @pytest.mark.integration
 def test_update_library_custom_config_file(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     cfg_path = tmp_path / "custom.json"
-    cfg_path.write_text(json.dumps({
-        "binder_id": "b",
-        "decks": {},
-        "purchased_file": "card_library/purchased.txt",
-    }))
+    cfg_path.write_text(
+        json.dumps(
+            {
+                "binder_id": "b",
+                "decks": {},
+                "purchased_file": "card_library/purchased.txt",
+            }
+        )
+    )
 
     result = _run(tmp_path, library=["1 Forest"], extra_args=["--config-file", str(cfg_path)])
 

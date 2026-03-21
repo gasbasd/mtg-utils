@@ -95,9 +95,11 @@ def _calculate_available_cards(
     card_usage_by_deck = {}  # Track which decks use which cards
     unavailable_cards = {}
     deck_configs = {}  # Store deck configs for later reference
+    truly_shared = {}  # deck_name -> set of card names genuinely shared (library insufficient without sharing)
 
     for deck_name, deck, deck_config in decks:
         deck_configs[deck_name] = deck_config
+        truly_shared[deck_name] = set()
         deck_unavailable = []
         shared_decks = deck_config.get("shared_decks", [])
 
@@ -130,6 +132,10 @@ def _calculate_available_cards(
             total_in_library = library_dict.get(card_name, 0)
             already_used = used_cards.get(card_name, 0)
             available_quantity = total_in_library - already_used
+
+            # Track cards that genuinely need sharing (library can't cover without it)
+            if shared_quantity > 0 and available_quantity < quantity:
+                truly_shared[deck_name].add(card_name)
 
             if available_quantity < quantity_to_consume:
                 msg = f"{quantity} {card_name} (have {total_in_library}"
@@ -212,7 +218,8 @@ def _calculate_available_cards(
                     console.print(f"    Common across shared decks ({common_count} cards):")
                     for card_name in sorted(common_shared_cards.keys()):
                         quantity_in_current = current_deck_cards[card_name]
-                        console.print(f"      - {quantity_in_current} {escape(card_name)}")
+                        note = "" if card_name in truly_shared.get(deck_name, set()) else " (available in library)"
+                        console.print(f"      - {quantity_in_current} {escape(card_name)}{note}")
                 else:
                     console.print("    (no cards common across all shared decks)")
 
@@ -235,7 +242,10 @@ def _calculate_available_cards(
                         if exclusive_cards:
                             console.print(f"    {escape(shared_deck_name)} ({len(exclusive_cards)} exclusive cards):")
                             for card_name in exclusive_cards:
-                                console.print(f"      - {current_deck_cards[card_name]} {escape(card_name)}")
+                                note = (
+                                    "" if card_name in truly_shared.get(deck_name, set()) else " (available in library)"
+                                )
+                                console.print(f"      - {current_deck_cards[card_name]} {escape(card_name)}{note}")
                         else:
                             console.print(f"      {escape(shared_deck_name)} (0 exclusive cards)")
             else:
@@ -250,7 +260,8 @@ def _calculate_available_cards(
                 )
                 for card_name in sorted(shared_cards_info.keys()):
                     quantity_in_current = current_deck_cards[card_name]
-                    console.print(f"    - {quantity_in_current} {escape(card_name)}")
+                    note = "" if card_name in truly_shared.get(deck_name, set()) else " (available in library)"
+                    console.print(f"    - {quantity_in_current} {escape(card_name)}{note}")
 
     # Calculate available cards
     available_dict = {}

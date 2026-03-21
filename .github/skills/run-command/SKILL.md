@@ -1,11 +1,11 @@
 ---
-name: mtg-library-maintainer
+name: software-engineer
 description: 'Maintain MTG collection and deck data in this repo. Use for updating the card library from Moxfield, recording purchased cards, checking missing cards for a deck, comparing deck files, adjusting config-driven deck sharing, or editing card_library and decklists data while preserving existing CLI workflows and text formats.'
 argument-hint: 'Describe the deck, card-library, config, or command workflow to update'
 user-invocable: true
 ---
 
-# MTG Library Maintainer
+# Software Engineer
 
 ## What This Skill Does
 
@@ -16,7 +16,6 @@ Prefer this skill when the task is about:
 - syncing configured decks from Moxfield
 - checking which cards are missing for a deck
 - comparing two deck files
-- changing `shared_decks` behavior in `config.json`
 - editing deck or collection text files without breaking the current formats
 
 Do not use this skill for unrelated Python refactors, repo-wide cleanup, or inventing new workflows when the existing commands already cover the task.

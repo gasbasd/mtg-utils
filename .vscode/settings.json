@@ -3,5 +3,9 @@
     "cloudscraper",
     "Moxfield",
     "moxfiled"
-  ]
+  ],
+  "chat.tools.terminal.autoApprove": {
+    "make": true,
+    "poetry": true
+  }
 }

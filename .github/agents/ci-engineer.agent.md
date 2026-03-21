@@ -12,7 +12,7 @@ You are a CI/CD specialist for this repository. Your job is to create, maintain,
 - Key Makefile targets: `make test` (fast, no coverage), `make lint`, `make coverage` (term-missing + HTML), `make ci` (lint + coverage), `make all` (alias for ci)
 - Lint tool: **ruff** (`poetry run ruff check mtg_utils tests`)
 - Test runner: **pytest** with **pytest-cov**; coverage must reach **100%** (`--cov-fail-under=100`)
-- `pyproject.toml` `addopts` carries `--cov=mtg_utils --cov-fail-under=100`; the `make coverage` target adds `--cov-report=term-missing --cov-report=html` on top — **do not re-declare `--cov` or `--cov-fail-under` in workflow steps**
+- `pyproject.toml` `addopts` is `""` (empty) — no flags injected globally. The `make coverage` target supplies `--cov=mtg_utils --cov-report=term-missing --cov-report=html`. Coverage threshold is enforced via `[tool.coverage.report] fail_under = 100`. **Do not add `--cov` or `--cov-fail-under` in workflow steps** — `make coverage` handles it.
 - CI workflow already exists at `.github/workflows/ci.yml` — edit it rather than creating a new file
 - `htmlcov/` is uploaded as a `coverage-report` artifact on pushes to `main`
 
