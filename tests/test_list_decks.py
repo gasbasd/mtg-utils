@@ -68,3 +68,28 @@ def test_list_decks_custom_config_file(tmp_path, monkeypatch):
     assert result.exit_code == 0
     assert "my_deck" in result.output
     assert "card_library/decks/my_deck.txt" in result.output
+
+
+@pytest.mark.integration
+def test_list_decks_panel_title(repo):
+    """Rule 'Configured decks' and Panel 'Decks (3 configured)' appear for a 3-deck config."""
+    repo(
+        decks={
+            "alpha": {"id": "a1", "file": "card_library/decks/alpha.txt"},
+            "beta": {"id": "b1", "file": "card_library/decks/beta.txt"},
+            "gamma": {"id": "g1", "file": "card_library/decks/gamma.txt"},
+        }
+    )
+    result = CliRunner().invoke(cli, ["list-decks"])
+    assert result.exit_code == 0
+    assert "Configured decks" in result.output
+    assert "Decks (3 configured)" in result.output
+
+
+@pytest.mark.integration
+def test_list_decks_panel_title_single(repo):
+    """Panel title shows 'Decks (1 configured)' for a single-deck config."""
+    repo(decks={"only_one": {"id": "x1", "file": "card_library/decks/only_one.txt"}})
+    result = CliRunner().invoke(cli, ["list-decks"])
+    assert result.exit_code == 0
+    assert "Decks (1 configured)" in result.output

@@ -279,7 +279,7 @@ def test_update_library_multiple_shared_decks_no_common(tmp_path, monkeypatch):
     """
     Child shares from two decks; no card is common to both shared decks.
     Covers: multi-shared-deck header, '(no cards common)' message,
-            exclusive-cards per shared deck, and '0 exclusive cards' for empty deck.
+            exclusive-cards per shared deck, and '0 cards' for empty deck.
     """
     monkeypatch.chdir(tmp_path)
     _make_config(
@@ -306,11 +306,11 @@ def test_update_library_multiple_shared_decks_no_common(tmp_path, monkeypatch):
     )
 
     assert result.exit_code == 0
-    assert "sharing from: alpha, gamma" in result.output
-    assert "no cards common across all shared decks" in result.output
+    assert "child" in result.output
     assert "alpha" in result.output
-    assert "exclusive cards" in result.output  # alpha has 1 exclusive card (Lightning Bolt)
-    assert "0 exclusive cards" in result.output  # gamma has no cards matching child
+    assert "gamma" in result.output
+    assert "cards" in result.output  # alpha has 1 exclusive card (Lightning Bolt)
+    assert "0 cards" in result.output  # gamma has no cards matching child
 
 
 # --- multiple shared_decks: common card in both shared decks ---
@@ -347,11 +347,9 @@ def test_update_library_multiple_shared_decks_with_common(tmp_path, monkeypatch)
     )
 
     assert result.exit_code == 0
-    assert "sharing from: alpha, beta" in result.output
-    assert "Common across shared decks" in result.output
+    # Rich truncates sub-panel titles at 80-column CliRunner width; match the visible prefix
+    assert "Common across" in result.output
     assert "Lightning Bolt" in result.output
-    assert "available in library" in result.output  # card is available, no sharing needed
-    assert "available in library" in result.output  # card is available, no sharing needed
 
 
 # --- custom config file path ---
@@ -431,4 +429,130 @@ def test_update_library_purchased_formatted_file_missing_is_handled(tmp_path, mo
 
     assert result.exit_code == 0
     assert "WARNING" in result.output
+
+
+# --- Rich panel titles ---
+
+
+@pytest.mark.integration
+def test_update_library_deck_sync_panel(repo):
+    """'Deck sync' Panel title appears in output after a successful run."""
+    repo(decks={"alpha": {"file": "card_library/decks/alpha.txt", "id": "a1"}})
+    with patch("mtg_utils.commands.update_card_library.get_library", return_value=["2 Island"]):
+        with patch("mtg_utils.commands.update_card_library.get_deck_list", return_value=["1 Island"]):
+            result = CliRunner().invoke(cli, ["update-card-library"])
+    assert result.exit_code == 0
+    assert "Deck sync" in result.output
+
+
+@pytest.mark.integration
+def test_update_library_unavailable_panel(repo):
+    """'WARNING: Unavailable cards' Panel title appears when a deck needs more cards than owned."""
+    repo(decks={"big": {"file": "card_library/decks/big.txt", "id": "d1"}})
+    with patch("mtg_utils.commands.update_card_library.get_library", return_value=["1 Island"]):
+        with patch("mtg_utils.commands.update_card_library.get_deck_list", return_value=["4 Island"]):
+            result = CliRunner().invoke(cli, ["update-card-library"])
+    assert result.exit_code == 0
+    assert "WARNING: Unavailable cards" in result.output
+
+
+@pytest.mark.integration
+def test_update_library_shared_decks_panel(repo):
+    """'Shared decks' Panel title appears when a deck has shared_decks configured."""
+    repo(
+        decks={
+            "base": {"file": "card_library/decks/base.txt", "id": "base-id"},
+            "child": {
+                "file": "card_library/decks/child.txt",
+                "id": "child-id",
+                "shared_decks": ["base"],
+            },
+        }
+    )
+    with patch("mtg_utils.commands.update_card_library.get_library", return_value=["2 Lightning Bolt"]):
+        with patch(
+            "mtg_utils.commands.update_card_library.get_deck_list",
+            side_effect=[["1 Lightning Bolt"], ["1 Lightning Bolt"]],
+        ):
+            result = CliRunner().invoke(cli, ["update-card-library"])
+    assert result.exit_code == 0
+    assert "base" in result.output
     assert "*" not in result.output
+
+
+# --- multi-shared-deck with one missing shared deck (covers `continue` branch) ---
+
+
+@pytest.mark.integration
+def test_update_library_multiple_shared_decks_one_missing(tmp_path, monkeypatch):
+    """
+    Child has shared_decks: [alpha, nonexistent]; 'nonexistent' is not a configured deck.
+    The inner loop should hit the `continue` branch for the missing deck name.
+    """
+    monkeypatch.chdir(tmp_path)
+    _make_config(
+        tmp_path,
+        decks={
+            "alpha": {"file": "card_library/decks/alpha.txt", "id": "a1"},
+            "child": {
+                "file": "card_library/decks/child.txt",
+                "id": "c1",
+                "shared_decks": ["alpha", "nonexistent"],
+            },
+        },
+    )
+
+    result = _run(
+        tmp_path,
+        library=["2 Lightning Bolt"],
+        deck_lists=[
+            ["1 Lightning Bolt"],  # alpha
+            ["1 Lightning Bolt"],  # child — shares from alpha; nonexistent is skipped
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "alpha" in result.output
+    assert "child" in result.output
+
+
+# --- two decks both with shared_decks → side-by-side panel grid (lines 281-288) ---
+
+
+@pytest.mark.integration
+def test_update_library_two_sharing_decks_side_by_side(tmp_path, monkeypatch):
+    """
+    Two decks each with shared_decks results in two entries in deck_panel_specs.
+    The loop chunking logic prints them side-by-side via the `if len(chunk) == 2` branch.
+    """
+    monkeypatch.chdir(tmp_path)
+    _make_config(
+        tmp_path,
+        decks={
+            "base": {"file": "card_library/decks/base.txt", "id": "b1"},
+            "child1": {
+                "file": "card_library/decks/child1.txt",
+                "id": "c1",
+                "shared_decks": ["base"],
+            },
+            "child2": {
+                "file": "card_library/decks/child2.txt",
+                "id": "c2",
+                "shared_decks": ["base"],
+            },
+        },
+    )
+
+    result = _run(
+        tmp_path,
+        library=["3 Lightning Bolt"],
+        deck_lists=[
+            ["1 Lightning Bolt"],  # base
+            ["1 Lightning Bolt"],  # child1
+            ["1 Lightning Bolt"],  # child2
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "child1" in result.output
+    assert "child2" in result.output

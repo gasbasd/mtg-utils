@@ -1,4 +1,6 @@
 import click
+from rich.panel import Panel
+from rich.rule import Rule
 from rich.table import Table
 
 from mtg_utils.utils.config import DEFAULT_CONFIG_FILE, load_config
@@ -13,9 +15,10 @@ def list_decks(config_file: str) -> None:
     decks = sorted(config["decks"].items())
     if not decks:
         return
-    table = Table(box=None, show_header=True, header_style="bold green")
+    table = Table(box=None, show_header=True, header_style="bold")
     table.add_column("Alias")
     table.add_column("File", overflow="fold")
     for alias, deck in decks:
         table.add_row(alias, deck["file"])
-    console.print(table)
+    console.print(Rule("[bold]Configured decks[/bold]"))
+    console.print(Panel(table, title=f"Decks ({len(decks)} configured)", border_style="green"))

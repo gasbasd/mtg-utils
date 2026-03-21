@@ -68,3 +68,16 @@ def test_compare_decks_deck2_excess(tmp_path):
     # 1 shared, 2 only in deck2
     assert "Cards in common: 1 (1 unique)" in result.output
     assert "2 Island" in result.output
+
+
+@pytest.mark.integration
+def test_compare_decks_rule_header(tmp_path, monkeypatch):
+    """Rule header contains both filenames and the 'vs' separator."""
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "a.txt").write_text("1 Island\n")
+    (tmp_path / "b.txt").write_text("1 Forest\n")
+    result = CliRunner().invoke(cli, ["compare-decks", "--deck1-file", "a.txt", "--deck2-file", "b.txt"])
+    assert result.exit_code == 0
+    assert "a.txt" in result.output
+    assert "b.txt" in result.output
+    assert "vs" in result.output

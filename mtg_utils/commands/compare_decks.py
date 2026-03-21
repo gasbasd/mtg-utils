@@ -1,6 +1,7 @@
 import click
 from rich.markup import escape
 from rich.panel import Panel
+from rich.rule import Rule
 from rich.table import Table
 
 from mtg_utils.utils.console import console
@@ -59,6 +60,8 @@ def compare_decks(deck1_file: str, deck2_file: str) -> None:
     total_unique_to_deck1_qty = sum(qty for _, qty in unique_to_deck1)
     total_unique_to_deck2_qty = sum(qty for _, qty in unique_to_deck2)
 
+    console.print(Rule(f"[bold]{escape(deck1_file)} vs {escape(deck2_file)}[/bold]"))
+
     if common_cards:
         console.print(
             Panel(
@@ -67,7 +70,27 @@ def compare_decks(deck1_file: str, deck2_file: str) -> None:
                 border_style="white",
             )
         )
-    if unique_to_deck1:
+
+    if unique_to_deck1 and unique_to_deck2:
+        height = max(len(unique_to_deck1), len(unique_to_deck2)) + 2
+        panel1 = Panel(
+            _card_table(unique_to_deck1, row_style="cyan"),
+            title=f"Only in {escape(deck1_file)}: {total_unique_to_deck1_qty} ({len(unique_to_deck1)} unique)",
+            border_style="cyan",
+            height=height,
+        )
+        panel2 = Panel(
+            _card_table(unique_to_deck2, row_style="magenta"),
+            title=f"Only in {escape(deck2_file)}: {total_unique_to_deck2_qty} ({len(unique_to_deck2)} unique)",
+            border_style="magenta",
+            height=height,
+        )
+        grid = Table.grid(expand=True)
+        grid.add_column(ratio=1)
+        grid.add_column(ratio=1)
+        grid.add_row(panel1, panel2)
+        console.print(grid)
+    elif unique_to_deck1:
         console.print(
             Panel(
                 _card_table(unique_to_deck1, row_style="cyan"),
@@ -75,7 +98,7 @@ def compare_decks(deck1_file: str, deck2_file: str) -> None:
                 border_style="cyan",
             )
         )
-    if unique_to_deck2:
+    elif unique_to_deck2:
         console.print(
             Panel(
                 _card_table(unique_to_deck2, row_style="magenta"),
