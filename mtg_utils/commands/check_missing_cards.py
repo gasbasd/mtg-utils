@@ -44,13 +44,30 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
             card_name = parts[1]
             cards_in_decks[card_name].append((deck_name, quantity))
 
+    # Load purchased card quantities (for * marker and availability)
+    purchased_quantities: dict[str, int] = {}
+    purchased_file = config.get("purchased_formatted_file", "")
+    if purchased_file:
+        try:
+            for entry in read_list(purchased_file):
+                qty, name = entry.split(" ", 1)
+                purchased_quantities[name] = int(qty)
+        except FileNotFoundError:
+            pass
+    purchased_names = set(purchased_quantities.keys())
+
     # Find missing cards from the deck
-    available_dict = {}
+    owned_dict: dict[str, int] = {}
     for card_entry in available_cards:
         parts = card_entry.split(" ", 1)
         quantity = int(parts[0])
         card_name = parts[1]
-        available_dict[card_name] = quantity
+        owned_dict[card_name] = quantity
+
+    # Supplement with purchased quantities (owned_dict stays as-is for marker logic)
+    available_dict = dict(owned_dict)
+    for card_name, qty in purchased_quantities.items():
+        available_dict[card_name] = available_dict.get(card_name, 0) + qty
 
     # Find missing and available cards from the deck
     completely_missing_cards = []
@@ -114,22 +131,30 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
     total = sum(int(card.split(" ", 1)[0]) for card in deck)
     console.print(Rule(f"[bold]Total cards in deck: {total}[/bold]"))
 
-    # Available cards panel
+    # Equal panel height: max content rows + 2 border lines
+    panel_height = max(len(available_in_deck), len(completely_missing_cards) if completely_missing_cards else 1) + 2
+
+    # Build available panel
     total_available_qty = sum(int(card.split(" ", 1)[0]) for card in available_in_deck)
     if available_in_deck:
         tbl = Table(box=None, show_header=False, padding=(0, 1, 0, 0))
+        tbl.add_column("p", no_wrap=True)
         tbl.add_column("qty", justify="right", style="dim")
         tbl.add_column("name")
         for entry in sorted(available_in_deck):
             qty, name = entry.split(" ", 1)
-            tbl.add_row(qty, escape(name))
-        console.print(
-            Panel(
-                tbl, title=f"Available: {total_available_qty} ({len(available_in_deck)} unique)", border_style="green"
-            )
+            marker = "[bold]*[/bold]" if name in purchased_names and owned_dict.get(name, 0) < int(qty) else ""
+            tbl.add_row(marker, qty, escape(name))
+        avail_panel = Panel(
+            tbl,
+            title=f"Available: {total_available_qty} ({len(available_in_deck)} unique)",
+            border_style="green",
+            height=panel_height,
         )
+    else:
+        avail_panel = None
 
-    # Missing cards panel
+    # Build missing panel
     total_completely_missing = sum(qty for _, qty in completely_missing_cards)
     if completely_missing_cards:
         tbl = Table(box=None, show_header=False, padding=(0, 1, 0, 0))
@@ -137,15 +162,24 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
         tbl.add_column("name", style="red")
         for card_name, missing_qty in sorted(completely_missing_cards, key=lambda x: x[0]):
             tbl.add_row(str(missing_qty), escape(card_name))
-        console.print(
-            Panel(
-                tbl,
-                title=f"Missing: {total_completely_missing} ({len(completely_missing_cards)} unique)",
-                border_style="red",
-            )
+        missing_panel = Panel(
+            tbl,
+            title=f"Missing: {total_completely_missing} ({len(completely_missing_cards)} unique)",
+            border_style="red",
+            height=panel_height,
         )
     else:
-        console.print(Panel("[green]✓ All cards available![/green]", border_style="green"))
+        missing_panel = Panel("[green]✓ All cards available![/green]", border_style="green", height=panel_height)
+
+    # Render available + missing side by side with equal size
+    if avail_panel:
+        grid = Table.grid(expand=True)
+        grid.add_column(ratio=1)
+        grid.add_column(ratio=1)
+        grid.add_row(avail_panel, missing_panel)
+        console.print(grid)
+    else:
+        console.print(missing_panel)
 
     # Cards in other decks panel
     if partially_missing_cards:
@@ -155,7 +189,7 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
         tbl.add_column("name")
         tbl.add_column("decks", style="dim")
         for card_name, qty, deck_info in sorted(partially_missing_cards, key=lambda x: x[0]):
-            tbl.add_row(str(qty), escape(card_name), f"[{escape(deck_info)}]")
+            tbl.add_row(str(qty), escape(card_name), escape(f"[{deck_info}]"))
         console.print(
             Panel(
                 tbl,
@@ -164,13 +198,32 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
             )
         )
 
-        # Per-deck breakdown panels
-        for deck_name, cards in sorted(cards_by_deck.items()):
-            total_needed = sum(usable_qty for _, _, usable_qty in cards if usable_qty > 0)
-            tbl = Table(box=None, show_header=False, padding=(0, 1, 0, 0))
-            tbl.add_column("qty", justify="right", style="dim")
-            tbl.add_column("name")
-            for card_name, total_qty, usable_qty in sorted(cards, key=lambda x: x[0]):
-                if usable_qty > 0:
-                    tbl.add_row(str(usable_qty), escape(card_name))
-            console.print(Panel(tbl, title=f"{escape(deck_name)} — {total_needed} cards needed", border_style="dim"))
+        # Per-deck breakdown panels — up to 3 per row
+        deck_items = sorted(cards_by_deck.items())
+        for i in range(0, len(deck_items), 3):
+            row_decks = deck_items[i : i + 3]
+            row_height = max(sum(1 for _, _, usable_qty in cards if usable_qty > 0) for _, cards in row_decks) + 2
+            row_panels = []
+            for deck_name, cards in row_decks:
+                total_needed = sum(usable_qty for _, _, usable_qty in cards if usable_qty > 0)
+                tbl = Table(box=None, show_header=False, padding=(0, 1, 0, 0))
+                tbl.add_column("p", no_wrap=True)
+                tbl.add_column("qty", justify="right", style="dim")
+                tbl.add_column("name")
+                for card_name, total_qty, usable_qty in sorted(cards, key=lambda x: x[0]):
+                    if usable_qty > 0:
+                        marker = "[bold]*[/bold]" if card_name in purchased_names else ""
+                        tbl.add_row(marker, str(usable_qty), escape(card_name))
+                row_panels.append(
+                    Panel(
+                        tbl,
+                        title=f"{escape(deck_name)} — {total_needed} cards needed",
+                        border_style="dim",
+                        height=row_height,
+                    )
+                )
+            grid = Table.grid(expand=True)
+            for _ in row_panels:
+                grid.add_column(ratio=1)
+            grid.add_row(*row_panels)
+            console.print(grid)

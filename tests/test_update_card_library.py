@@ -88,7 +88,9 @@ def test_update_library_purchased_cards_added(tmp_path, monkeypatch):
 
     assert result.exit_code == 0
     available = (tmp_path / "card_library" / "available_cards.txt").read_text()
-    assert "4 Island" in available  # 2 owned + 2 purchased
+    assert "2 Island" in available  # only owned; purchased no longer merged into available_cards.txt
+    purchased_formatted = (tmp_path / "card_library" / "purchased_formatted.txt").read_text()
+    assert "2 Island" in purchased_formatted
 
 
 # --- warning when deck needs more than owned ---
@@ -194,7 +196,7 @@ def test_update_library_deck_retrieval_fails(tmp_path, monkeypatch):
 
 @pytest.mark.integration
 def test_update_library_purchased_card_not_in_library(tmp_path, monkeypatch):
-    """Purchased card that doesn't exist in owned library gets added as new entry."""
+    """Purchased card not in owned library is written to purchased_formatted.txt but not available_cards.txt."""
     monkeypatch.chdir(tmp_path)
     _make_config(tmp_path)
     (tmp_path / "card_library").mkdir()
@@ -204,8 +206,10 @@ def test_update_library_purchased_card_not_in_library(tmp_path, monkeypatch):
 
     assert result.exit_code == 0
     available = (tmp_path / "card_library" / "available_cards.txt").read_text()
-    assert "1 Forest" in available
+    assert "Forest" not in available
     assert "2 Island" in available
+    purchased_formatted = (tmp_path / "card_library" / "purchased_formatted.txt").read_text()
+    assert "1 Forest" in purchased_formatted
 
 
 # --- warning includes sharing details and already-used info ---
@@ -371,3 +375,60 @@ def test_update_library_custom_config_file(tmp_path, monkeypatch):
 
     assert result.exit_code == 0
     assert (tmp_path / "card_library" / "owned_cards.txt").exists()
+
+
+# --- purchased * marker in missing-cards warning ---
+
+
+@pytest.mark.integration
+def test_update_library_purchased_marker_in_unavailable_warning(tmp_path, monkeypatch):
+    """Unavailable card that is in purchased_formatted.txt shows * in the warning."""
+    monkeypatch.chdir(tmp_path)
+    config = {
+        "binder_id": "test-binder",
+        "decks": {"big": {"file": "card_library/decks/big.txt", "id": "d1"}},
+        "purchased_file": "card_library/purchased.txt",
+        "purchased_formatted_file": "card_library/purchased_formatted.txt",
+    }
+    (tmp_path / "config.json").write_text(json.dumps(config))
+    (tmp_path / "card_library").mkdir()
+    (tmp_path / "card_library" / "purchased_formatted.txt").write_text("4 Island\n")
+
+    result = _run(tmp_path, library=["1 Island"], deck_lists=[["4 Island"]])
+
+    assert result.exit_code == 0
+    assert "WARNING" in result.output
+    assert "*" in result.output
+
+
+@pytest.mark.integration
+def test_update_library_no_purchased_marker_when_not_purchased(tmp_path, monkeypatch):
+    """Unavailable card NOT in purchased_formatted.txt shows no * in the warning."""
+    monkeypatch.chdir(tmp_path)
+    _make_config(tmp_path, decks={"big": {"file": "card_library/decks/big.txt", "id": "d1"}})
+
+    result = _run(tmp_path, library=["1 Island"], deck_lists=[["4 Island"]])
+
+    assert result.exit_code == 0
+    assert "WARNING" in result.output
+    assert "*" not in result.output
+
+
+@pytest.mark.integration
+def test_update_library_purchased_formatted_file_missing_is_handled(tmp_path, monkeypatch):
+    """purchased_formatted_file key set but file absent → FileNotFoundError silently ignored."""
+    monkeypatch.chdir(tmp_path)
+    config = {
+        "binder_id": "test-binder",
+        "decks": {"big": {"file": "card_library/decks/big.txt", "id": "d1"}},
+        "purchased_file": "card_library/purchased.txt",
+        "purchased_formatted_file": "card_library/purchased_formatted.txt",
+    }
+    (tmp_path / "config.json").write_text(json.dumps(config))
+    # purchased_formatted.txt intentionally NOT created
+
+    result = _run(tmp_path, library=["1 Island"], deck_lists=[["4 Island"]])
+
+    assert result.exit_code == 0
+    assert "WARNING" in result.output
+    assert "*" not in result.output

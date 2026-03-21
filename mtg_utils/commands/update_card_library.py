@@ -42,7 +42,8 @@ def _process_purchased_cards(config) -> list[str]:
     card_counter = Counter(raw_cards)
     purchased_cards = [f"{quantity} {card}" for card, quantity in card_counter.items()]
 
-    with open(file="card_library/purchased_formatted.txt", mode="w") as file:
+    purchased_formatted_file = config.get("purchased_formatted_file", "card_library/purchased_formatted.txt")
+    with open(file=purchased_formatted_file, mode="w") as file:
         for card in sorted(purchased_cards):
             file.write(f"{card}\n")
 
@@ -52,14 +53,22 @@ def _process_purchased_cards(config) -> list[str]:
     return purchased_cards
 
 
-def _calculate_available_cards(
-    library: list[str], decks: list[tuple[str, list[str], dict]], purchased_cards: list[str], config: dict
-) -> list[str]:
-    """Calculate available cards by subtracting deck cards from the library and adding purchased cards.
+def _calculate_available_cards(library: list[str], decks: list[tuple[str, list[str], dict]], config: dict) -> list[str]:
+    """Calculate available cards by subtracting deck cards from the library.
 
     Supports shared_decks: if a deck has a 'shared_decks' list in its config, it will reuse cards from those
     decks without consuming additional cards from the library pool. Only the remainder is consumed.
     """
+    # Load purchased card names for * marker in warnings
+    purchased_names: set[str] = set()
+    purchased_file = config.get("purchased_formatted_file", "")
+    if purchased_file:
+        try:
+            for entry in read_list(purchased_file):
+                purchased_names.add(entry.split(" ", 1)[1])
+        except FileNotFoundError:
+            pass
+
     # Convert library to dictionary
     library_dict = {}
     for card_entry in library:
@@ -67,18 +76,6 @@ def _calculate_available_cards(
         quantity = int(parts[0])
         card_name = parts[1]
         library_dict[card_name] = quantity
-
-    # Add purchased cards to library
-    if purchased_cards:
-        for card_entry in purchased_cards:
-            parts = card_entry.split(" ", 1)
-            quantity = int(parts[0])
-            card_name = parts[1]
-
-            if card_name in library_dict:
-                library_dict[card_name] += quantity
-            else:
-                library_dict[card_name] = quantity
 
     # Build deck lookup dictionary for card quantities
     deck_cards = {}  # deck_name -> {card_name: quantity}
@@ -145,7 +142,7 @@ def _calculate_available_cards(
                     decks_using = ", ".join([f"{q} in {dn}" for dn, q in card_usage_by_deck[card_name].items()])
                     msg += f", already used: {decks_using}"
                 msg += ")"
-                deck_unavailable.append(msg)
+                deck_unavailable.append((card_name, msg))
 
             # Track used cards (only the quantity consumed from library)
             if quantity_to_consume > 0:
@@ -169,8 +166,9 @@ def _calculate_available_cards(
         )
         for deck_name, cards in unavailable_cards.items():
             err_console.print(f"\n  {escape(deck_name)} deck is missing:")
-            for card in cards:
-                err_console.print(f"    - {escape(card)}")
+            for card_name, msg in cards:
+                marker = "[bold]*[/bold] " if card_name in purchased_names else ""
+                err_console.print(f"    - {marker}{escape(msg)}")
 
     # Show shared decks information for all decks that have shared_decks configured
     decks_with_sharing = [(name, cfg) for name, cfg in deck_configs.items() if cfg.get("shared_decks")]
@@ -321,6 +319,6 @@ def update_card_library(config_file) -> None:
     decks = [(name, deck, info) for name, ok, _, deck, info in results if ok]
 
     owned_cards = _update_owned_cards(binder_id=config["binder_id"])
-    purchased_cards = _process_purchased_cards(config=config)
+    _process_purchased_cards(config=config)
 
-    _calculate_available_cards(owned_cards, decks, purchased_cards, config)
+    _calculate_available_cards(owned_cards, decks, config)

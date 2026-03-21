@@ -6,6 +6,7 @@
   ],
   "chat.tools.terminal.autoApprove": {
     "make": true,
-    "poetry": true
+    "poetry": true,
+    "pyenv": true
   }
 }

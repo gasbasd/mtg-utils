@@ -2,6 +2,7 @@
 name: "CI Engineer"
 description: "Use for GitHub Actions and CI/CD tasks: creating or updating workflows (lint, test, coverage, release), configuring branch protection, adding job matrices, managing secrets references, setting up caching, or debugging failing pipeline runs. DO NOT use for application code changes or test authoring."
 tools: [read, search, edit, execute]
+agents: []
 argument-hint: "Describe the workflow to create, fix, or improve (e.g. 'add a lint job', 'cache Poetry dependencies', 'run tests on push to main')"
 user-invocable: true
 ---
@@ -44,48 +45,7 @@ You are a CI/CD specialist for this repository. Your job is to create, maintain,
 
 ## Current workflow: `.github/workflows/ci.yml`
 
-This file already exists. Its current structure:
-
-```yaml
-name: CI
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.13" }
-      - uses: actions/cache@v4
-        with:
-          path: ~/.cache/pypoetry
-          key: poetry-${{ hashFiles('poetry.lock') }}
-      - run: pip install poetry && poetry install
-      - run: make lint
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.13" }
-      - uses: actions/cache@v4
-        with:
-          path: ~/.cache/pypoetry
-          key: poetry-${{ hashFiles('poetry.lock') }}
-      - run: pip install poetry && poetry install
-      - run: make coverage
-      - uses: actions/upload-artifact@v4
-        if: github.ref == 'refs/heads/main'
-        with:
-          name: coverage-report
-          path: htmlcov/
-```
+This file already exists. Always read it directly with #tool:read before making any changes — do not rely on a cached copy.
 
 ## Output Format
 Return:
