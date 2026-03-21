@@ -20,6 +20,20 @@ jobs:
       - run: pip install poetry && poetry install
       - run: make lint
 
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: poetry-${{ hashFiles('poetry.lock') }}
+      - run: pip install poetry && poetry install
+      - run: make typecheck
+
   test:
     runs-on: ubuntu-latest
     steps:

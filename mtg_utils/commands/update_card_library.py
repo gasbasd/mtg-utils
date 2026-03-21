@@ -2,7 +2,7 @@ import os
 from collections import Counter
 
 import click
-from rich.console import Group
+from rich.console import Group, RenderableType
 from rich.markup import escape
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
@@ -183,7 +183,7 @@ def _calculate_available_cards(library: list[str], decks: list[tuple[str, list[s
     decks_with_sharing = [(name, cfg) for name, cfg in deck_configs.items() if cfg.get("shared_decks")]
     if decks_with_sharing:
         # Each entry: (renderable, title, content_lines) — panels are built later for equal heights
-        deck_panel_specs: list[tuple[object, str, int]] = []
+        deck_panel_specs: list[tuple[RenderableType, str, int]] = []
 
         for deck_name, deck_config in decks_with_sharing:
             shared_decks = deck_config.get("shared_decks", [])
@@ -216,7 +216,7 @@ def _calculate_available_cards(library: list[str], decks: list[tuple[str, list[s
                 exclusive_shared_cards = {card: dl for card, dl in shared_cards_info.items() if len(dl) == 1}
 
                 # Build sub-panel specs: (title, renderable, row_count)
-                sub_panel_specs: list[tuple[str, object, int]] = []
+                sub_panel_specs: list[tuple[str, RenderableType, int]] = []
 
                 if common_shared_cards:
                     common_count = sum(current_deck_cards[c] for c in common_shared_cards)

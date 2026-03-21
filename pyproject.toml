@@ -19,6 +19,7 @@ mtg-utils = "mtg_utils.main:cli"
 pytest = ">=8.0.0"
 pytest-cov = "^7.0.0"
 ruff = "^0.15.6"
+pyright = ">=1.1.0"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -39,6 +40,11 @@ exclude_also = ["# Show cards that are in the deck but not needed"]
 
 [tool.ruff]
 line-length = 120
+
+[tool.pyright]
+pythonVersion = "3.13"
+typeCheckingMode = "basic"
+include = ["mtg_utils"]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

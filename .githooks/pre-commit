@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+echo "► Running lint..."
+make lint
+
+echo "► Running typecheck..."
+make typecheck
+
+echo "✓ Pre-commit checks passed."
