@@ -5,6 +5,7 @@ from rich.table import Table
 from rich.text import Text
 
 from mtg_utils.utils.console import console, err_console
+from mtg_utils.utils.panels import side_by_side
 
 
 def _shared_card_table(card_names: list[str], deck_cards_for_current: dict[str, int]) -> Table:
@@ -140,11 +141,7 @@ def _render_shared_deck_panels(
             height = max(chunk[0][2], chunk[1][2]) + 2
             panel0 = Panel(chunk[0][0], title=chunk[0][1], border_style="dim", height=height)
             panel1 = Panel(chunk[1][0], title=chunk[1][1], border_style="dim", height=height)
-            grid = Table.grid(expand=True)
-            grid.add_column(ratio=1)
-            grid.add_column(ratio=1)
-            grid.add_row(panel0, panel1)
-            console.print(grid)
+            console.print(side_by_side(panel0, panel1))
         else:
             height = chunk[0][2] + 2
             console.print(Panel(chunk[0][0], title=chunk[0][1], border_style="dim", height=height))

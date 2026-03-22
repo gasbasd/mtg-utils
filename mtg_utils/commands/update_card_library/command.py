@@ -7,8 +7,9 @@ from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
-from mtg_utils.commands.update_card_library.logic import DeckFetchResult, _compute_card_usage, _parse_card_list
+from mtg_utils.commands.update_card_library.logic import DeckFetchResult, _compute_card_usage
 from mtg_utils.commands.update_card_library.render import _render_shared_deck_panels, _render_unavailable_warnings
+from mtg_utils.utils.cards import parse_card_list
 from mtg_utils.utils.config import DEFAULT_CONFIG_FILE, load_config
 from mtg_utils.utils.console import console, err_console
 from mtg_utils.utils.moxfield_api import get_deck_list, get_library, library_sort_key
@@ -65,8 +66,8 @@ def _calculate_available_cards(library: list[str], decks: list[tuple[str, list[s
         except FileNotFoundError:
             pass
 
-    library_dict = _parse_card_list(library)
-    deck_cards = {name: _parse_card_list(cards) for name, cards, _ in decks}
+    library_dict = parse_card_list(library)
+    deck_cards = {name: parse_card_list(cards) for name, cards, _ in decks}
 
     used_cards, unavailable_cards, deck_configs = _compute_card_usage(library_dict, deck_cards, decks)
 

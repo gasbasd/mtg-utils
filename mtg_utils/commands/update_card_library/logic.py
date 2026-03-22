@@ -2,6 +2,7 @@ from typing import NamedTuple
 
 from rich.markup import escape
 
+from mtg_utils.utils.cards import parse_card_list
 from mtg_utils.utils.console import err_console
 
 
@@ -11,15 +12,6 @@ class DeckFetchResult(NamedTuple):
     file: str
     cards: list[str]
     config: dict
-
-
-def _parse_card_list(entries: list[str]) -> dict[str, int]:
-    """Parse a list of '2 Card Name' entries into a {card_name: quantity} dict."""
-    result: dict[str, int] = {}
-    for entry in entries:
-        qty_str, _, name = entry.partition(" ")
-        result[name] = int(qty_str)
-    return result
 
 
 def _compute_card_usage(
@@ -51,10 +43,7 @@ def _compute_card_usage(
                     f"non-existent shared deck '{escape(shared_deck_name)}'"
                 )
 
-        for card_entry in deck:
-            qty_str, _, card_name = card_entry.partition(" ")
-            quantity = int(qty_str)
-
+        for card_name, quantity in parse_card_list(deck).items():
             shared_quantity = 0
             shared_details: list[str] = []
             for shared_deck_name in shared_decks:

@@ -6,9 +6,11 @@ from rich.panel import Panel
 from rich.rule import Rule
 from rich.table import Table
 
+from mtg_utils.utils.cards import parse_card_list
 from mtg_utils.utils.config import DEFAULT_CONFIG_FILE, load_config
 from mtg_utils.utils.console import console, err_console
 from mtg_utils.utils.moxfield_api import get_deck_list
+from mtg_utils.utils.panels import side_by_side
 from mtg_utils.utils.readers import read_list
 
 
@@ -37,11 +39,7 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
     # Read all deck files to find cards in other decks
     cards_in_decks = defaultdict(list)
     for deck_name, deck_info in config["decks"].items():
-        deck_cards = read_list(deck_info["file"])
-        for card_entry in deck_cards:
-            parts = card_entry.split(" ", 1)
-            quantity = int(parts[0])
-            card_name = parts[1]
+        for card_name, quantity in parse_card_list(read_list(deck_info["file"])).items():
             cards_in_decks[card_name].append((deck_name, quantity))
 
     # Load purchased card quantities (for * marker and availability)
@@ -57,12 +55,7 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
     purchased_names = set(purchased_quantities.keys())
 
     # Find missing cards from the deck
-    owned_dict: dict[str, int] = {}
-    for card_entry in available_cards:
-        parts = card_entry.split(" ", 1)
-        quantity = int(parts[0])
-        card_name = parts[1]
-        owned_dict[card_name] = quantity
+    owned_dict = parse_card_list(available_cards)
 
     # Supplement with purchased quantities (owned_dict stays as-is for marker logic)
     available_dict = dict(owned_dict)
@@ -75,11 +68,7 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
     available_in_deck = []
     cards_by_deck = defaultdict(list)
 
-    for card_entry in deck:
-        parts = card_entry.split(" ", 1)
-        deck_quantity = int(parts[0])
-        card_name = parts[1]
-
+    for card_name, deck_quantity in parse_card_list(deck).items():
         available_quantity = available_dict.get(card_name, 0)
 
         if available_quantity < deck_quantity:
@@ -173,11 +162,7 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
 
     # Render available + missing side by side with equal size
     if avail_panel:
-        grid = Table.grid(expand=True)
-        grid.add_column(ratio=1)
-        grid.add_column(ratio=1)
-        grid.add_row(avail_panel, missing_panel)
-        console.print(grid)
+        console.print(side_by_side(avail_panel, missing_panel))
     else:
         console.print(missing_panel)
 

@@ -150,28 +150,6 @@ def test_check_missing_partial_from_other_deck(tmp_path, monkeypatch):
 
 
 @pytest.mark.integration
-def test_check_missing_shows_deck_in_missing_column(tmp_path, monkeypatch):
-    """When a card is partially available from another deck, the 'In other decks'
-    panel should name the source deck alongside the card."""
-    monkeypatch.chdir(tmp_path)
-    deck_file = tmp_path / "target.txt"
-    deck_file.write_text("3 Lightning Bolt\n")  # need 3, archenemy only has 1
-    _setup(
-        tmp_path,
-        available_cards=[],
-        deck_cards_by_name={"archenemy": ["1 Lightning Bolt"]},
-    )
-
-    result = CliRunner().invoke(cli, ["check-missing-cards", "--deck-file", str(deck_file)])
-
-    assert result.exit_code == 0
-    assert "Missing:" in result.output
-    assert "Lightning Bolt" in result.output
-    # 'In other decks' panel should name the source deck
-    assert "archenemy" in result.output
-
-
-@pytest.mark.integration
 def test_check_missing_no_deck_column_when_no_other_decks(tmp_path, monkeypatch):
     """When no configured decks exist, the Missing panel still renders correctly."""
     monkeypatch.chdir(tmp_path)

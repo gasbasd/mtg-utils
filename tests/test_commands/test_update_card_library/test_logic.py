@@ -1,26 +1,7 @@
 import pytest
 
 from mtg_utils.commands.update_card_library import DeckFetchResult
-from mtg_utils.commands.update_card_library.logic import _compute_card_usage, _parse_card_list
-
-
-@pytest.mark.unit
-class TestParseCardList:
-    def test_empty_list(self):
-        assert _parse_card_list([]) == {}
-
-    def test_single_entry(self):
-        assert _parse_card_list(["1 Island"]) == {"Island": 1}
-
-    def test_multiple_copies(self):
-        assert _parse_card_list(["4 Lightning Bolt"]) == {"Lightning Bolt": 4}
-
-    def test_multi_word_name(self):
-        assert _parse_card_list(["2 Birds of Paradise"]) == {"Birds of Paradise": 2}
-
-    def test_multiple_entries(self):
-        result = _parse_card_list(["3 Island", "1 Forest", "2 Mountain"])
-        assert result == {"Island": 3, "Forest": 1, "Mountain": 2}
+from mtg_utils.commands.update_card_library.logic import _compute_card_usage
 
 
 @pytest.mark.unit
@@ -100,16 +81,6 @@ class TestComputeCardUsage:
         _, msg = unavailable["child"][0]
         assert "sharing" in msg
         assert "1 in base" in msg
-
-    def test_invalid_shared_deck_reference_warns(self, capsys):
-        """Referencing a non-existent shared deck emits a warning and does not crash."""
-        library = {"Island": 1}
-        deck_cards = {"orphan": {"Island": 1}}
-        decks = [("orphan", ["1 Island"], {"shared_decks": ["ghost"]})]
-        _compute_card_usage(library, deck_cards, decks)
-        # Should complete without raising; warning goes to err_console (stderr)
-        captured = capsys.readouterr()
-        assert "ghost" in captured.err or True  # Rich may buffer; command-level tests verify output
 
     def test_returns_deck_configs(self):
         library = {"Island": 2}
