@@ -12,13 +12,13 @@ from mtg_utils.utils.console import console
 def list_decks(config_file: str) -> None:
     """List all configured decks and their file paths."""
     config = load_config(config_file)
-    decks = sorted(config["decks"].items())
+    decks = sorted(config.decks.items())
     if not decks:
         return
     table = Table(box=None, show_header=True, header_style="bold")
     table.add_column("Alias")
     table.add_column("File", overflow="fold")
     for alias, deck in decks:
-        table.add_row(alias, deck["file"])
+        table.add_row(alias, deck.file)
     console.print(Rule("[bold]Configured decks[/bold]"))
     console.print(Panel(table, title=f"Decks ({len(decks)} configured)", border_style="green"))

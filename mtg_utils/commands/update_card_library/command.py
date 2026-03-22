@@ -10,7 +10,7 @@ from rich.table import Table
 from mtg_utils.commands.update_card_library.logic import DeckFetchResult, _compute_card_usage
 from mtg_utils.commands.update_card_library.render import _render_shared_deck_panels, _render_unavailable_warnings
 from mtg_utils.utils.cards import parse_card_list
-from mtg_utils.utils.config import DEFAULT_CONFIG_FILE, load_config
+from mtg_utils.utils.config import DEFAULT_CONFIG_FILE, AppConfig, DeckConfig, load_config
 from mtg_utils.utils.console import console, err_console
 from mtg_utils.utils.moxfield_api import get_deck_list, get_library, library_sort_key
 from mtg_utils.utils.readers import read_list
@@ -26,8 +26,8 @@ def _update_owned_cards(binder_id) -> list[str]:
     return owned_cards
 
 
-def _process_purchased_cards(config) -> list[str]:
-    purchased_file = config.get("purchased_file", "card_library/purchased.txt")
+def _process_purchased_cards(config: AppConfig) -> list[str]:
+    purchased_file = config.purchased_file
 
     if not os.path.exists(path=purchased_file):
         console.print(f"[green]✓[/green] Creating empty purchased cards file at {escape(purchased_file)}")
@@ -40,7 +40,7 @@ def _process_purchased_cards(config) -> list[str]:
     card_counter = Counter(raw_cards)
     purchased_cards = [f"{quantity} {card}" for card, quantity in card_counter.items()]
 
-    purchased_formatted_file = config.get("purchased_formatted_file", "card_library/purchased_formatted.txt")
+    purchased_formatted_file = config.purchased_formatted_file
     with open(file=purchased_formatted_file, mode="w") as file:
         for card in sorted(purchased_cards):
             file.write(f"{card}\n")
@@ -51,14 +51,16 @@ def _process_purchased_cards(config) -> list[str]:
     return purchased_cards
 
 
-def _calculate_available_cards(library: list[str], decks: list[tuple[str, list[str], dict]], config: dict) -> list[str]:
+def _calculate_available_cards(
+    library: list[str], decks: list[tuple[str, list[str], DeckConfig]], config: AppConfig
+) -> list[str]:
     """Calculate available cards by subtracting deck cards from the library.
 
     Supports shared_decks: if a deck has a 'shared_decks' list in its config, it will reuse cards from those
     decks without consuming additional cards from the library pool. Only the remainder is consumed.
     """
     purchased_names: set[str] = set()
-    purchased_file = config.get("purchased_formatted_file", "")
+    purchased_file = config.purchased_formatted_file
     if purchased_file:
         try:
             for entry in read_list(purchased_file):
@@ -98,16 +100,16 @@ def update_card_library(config_file) -> None:
 
     results: list[DeckFetchResult] = []
     with Progress(SpinnerColumn(), TextColumn("{task.description}"), console=console, transient=True) as progress:
-        for deck_name, deck_info in config["decks"].items():
+        for deck_name, deck_info in config.decks.items():
             task = progress.add_task(f"Fetching [bold]{escape(deck_name)}[/bold]\u2026", total=None)
-            deck = get_deck_list(deck_info["id"])
+            deck = get_deck_list(deck_info.id)
             progress.remove_task(task)
             if deck:
-                os.makedirs(os.path.dirname(deck_info["file"]), exist_ok=True)
-                with open(deck_info["file"], mode="w") as file:
+                os.makedirs(os.path.dirname(deck_info.file), exist_ok=True)
+                with open(deck_info.file, mode="w") as file:
                     for card in deck:
                         file.write(f"{card}\n")
-                results.append(DeckFetchResult(deck_name, True, deck_info["file"], deck, deck_info))
+                results.append(DeckFetchResult(deck_name, True, deck_info.file, deck, deck_info))
             else:
                 err_console.print(
                     f"[yellow]⚠[/yellow] Failed to retrieve [bold]{escape(deck_name)}[/bold] deck from Moxfield."
@@ -124,6 +126,6 @@ def update_card_library(config_file) -> None:
 
     decks = [(r.name, r.cards, r.config) for r in results if r.ok]
 
-    owned_cards = _update_owned_cards(binder_id=config["binder_id"])
+    owned_cards = _update_owned_cards(binder_id=config.binder_id)
     _process_purchased_cards(config=config)
     _calculate_available_cards(owned_cards, decks, config)

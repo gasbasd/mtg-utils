@@ -38,13 +38,13 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
 
     # Read all deck files to find cards in other decks
     cards_in_decks = defaultdict(list)
-    for deck_name, deck_info in config["decks"].items():
-        for card_name, quantity in parse_card_list(read_list(deck_info["file"])).items():
+    for deck_name, deck_info in config.decks.items():
+        for card_name, quantity in parse_card_list(read_list(deck_info.file)).items():
             cards_in_decks[card_name].append((deck_name, quantity))
 
     # Load purchased card quantities (for * marker and availability)
     purchased_quantities: dict[str, int] = {}
-    purchased_file = config.get("purchased_formatted_file", "")
+    purchased_file = config.purchased_formatted_file
     if purchased_file:
         try:
             for entry in read_list(purchased_file):

@@ -3,6 +3,7 @@ from typing import NamedTuple
 from rich.markup import escape
 
 from mtg_utils.utils.cards import parse_card_list
+from mtg_utils.utils.config import DeckConfig
 from mtg_utils.utils.console import err_console
 
 
@@ -11,14 +12,14 @@ class DeckFetchResult(NamedTuple):
     ok: bool
     file: str
     cards: list[str]
-    config: dict
+    config: DeckConfig
 
 
 def _compute_card_usage(
     library_dict: dict[str, int],
     deck_cards: dict[str, dict[str, int]],
-    decks: list[tuple[str, list[str], dict]],
-) -> tuple[dict[str, int], dict[str, list[tuple[str, str]]], dict]:
+    decks: list[tuple[str, list[str], DeckConfig]],
+) -> tuple[dict[str, int], dict[str, list[tuple[str, str]]], dict[str, DeckConfig]]:
     """Compute library consumption and flag unavailable cards.
 
     Returns:
@@ -29,12 +30,12 @@ def _compute_card_usage(
     used_cards: dict[str, int] = {}
     card_usage_by_deck: dict[str, dict[str, int]] = {}
     unavailable_cards: dict[str, list[tuple[str, str]]] = {}
-    deck_configs: dict = {}
+    deck_configs: dict[str, DeckConfig] = {}
 
     for deck_name, deck, deck_config in decks:
         deck_configs[deck_name] = deck_config
         deck_unavailable: list[tuple[str, str]] = []
-        shared_decks: list[str] = deck_config.get("shared_decks", [])
+        shared_decks: list[str] = deck_config.shared_decks
 
         for shared_deck_name in shared_decks:
             if shared_deck_name not in deck_cards:

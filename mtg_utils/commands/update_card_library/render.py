@@ -4,6 +4,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
+from mtg_utils.utils.config import DeckConfig
 from mtg_utils.utils.console import console, err_console
 from mtg_utils.utils.panels import side_by_side
 
@@ -41,16 +42,16 @@ def _render_unavailable_warnings(
 
 def _render_shared_deck_panels(
     deck_cards: dict[str, dict[str, int]],
-    deck_configs: dict,
+    deck_configs: dict[str, DeckConfig],
 ) -> None:
-    decks_with_sharing = [(name, cfg) for name, cfg in deck_configs.items() if cfg.get("shared_decks")]
+    decks_with_sharing = [(name, cfg) for name, cfg in deck_configs.items() if cfg.shared_decks]
     if not decks_with_sharing:
         return
 
     deck_panel_specs: list[tuple[RenderableType, str, int]] = []
 
     for deck_name, deck_config in decks_with_sharing:
-        shared_decks: list[str] = deck_config.get("shared_decks", [])
+        shared_decks: list[str] = deck_config.shared_decks
         current_deck_cards = deck_cards[deck_name]
 
         shared_cards_info: dict[str, list[tuple[str, int]]] = {}
