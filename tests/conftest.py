@@ -13,12 +13,14 @@ def repo(tmp_path, monkeypatch):
     """
     monkeypatch.chdir(tmp_path)
 
-    def make_config(binder_id="test-binder", decks=None, purchased_file="card_library/purchased.txt"):
+    def make_config(binder_id="test-binder", decks=None, purchased_file="card_library/purchased.txt", purchased_formatted_file=None):
         config = {
             "binder_id": binder_id,
             "decks": decks or {},
             "purchased_file": purchased_file,
         }
+        if purchased_formatted_file is not None:
+            config["purchased_formatted_file"] = purchased_formatted_file
         (tmp_path / "card_library").mkdir(exist_ok=True)
         (tmp_path / "card_library" / "decks").mkdir(exist_ok=True)
         (tmp_path / "config.json").write_text(json.dumps(config))

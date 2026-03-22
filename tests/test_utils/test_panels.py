@@ -1,7 +1,7 @@
 import pytest
 from rich.table import Table
 
-from mtg_utils.utils.panels import card_table, side_by_side
+from mtg_utils.utils.panels import card_table, panel_row
 
 
 @pytest.mark.unit
@@ -25,17 +25,22 @@ class TestCardTable:
 
 
 @pytest.mark.unit
-class TestSideBySide:
+class TestPanelRow:
     def test_returns_rich_table(self):
         from rich.panel import Panel
 
-        p1 = Panel("left")
-        p2 = Panel("right")
-        result = side_by_side(p1, p2)
+        result = panel_row([Panel("a"), Panel("b"), Panel("c")])
         assert isinstance(result, Table)
 
-    def test_has_two_columns(self):
+    def test_column_count_matches_input(self):
         from rich.panel import Panel
 
-        result = side_by_side(Panel("a"), Panel("b"))
-        assert len(result.columns) == 2
+        result = panel_row([Panel("a"), Panel("b"), Panel("c")])
+        assert len(result.columns) == 3
+
+    def test_single_panel(self):
+        from rich.panel import Panel
+
+        result = panel_row([Panel("x")])
+        assert isinstance(result, Table)
+        assert len(result.columns) == 1

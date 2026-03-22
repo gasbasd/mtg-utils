@@ -4,21 +4,13 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
+from mtg_utils.commands.update_card_library.logic import DeckFetchResult
 from mtg_utils.utils.config import DeckConfig
 from mtg_utils.utils.console import console, err_console
-from mtg_utils.utils.panels import side_by_side
+from mtg_utils.utils.panels import card_table, panel_row, side_by_side
 
 
-def _shared_card_table(card_names: list[str], deck_cards_for_current: dict[str, int]) -> Table:
-    tbl = Table(box=None, show_header=False, padding=(0, 1, 0, 0))
-    tbl.add_column("qty", justify="right", style="dim")
-    tbl.add_column("name")
-    for card_name in sorted(card_names):
-        tbl.add_row(str(deck_cards_for_current[card_name]), escape(card_name))
-    return tbl
-
-
-def _render_unavailable_warnings(
+def render_unavailable_warnings(
     unavailable_cards: dict[str, list[tuple[str, str]]],
     purchased_names: set[str],
 ) -> None:
@@ -40,7 +32,7 @@ def _render_unavailable_warnings(
     err_console.print(Panel(Group(*warn_parts), title="⚠ WARNING: Unavailable cards", border_style="yellow"))
 
 
-def _render_shared_deck_panels(
+def render_shared_deck_panels(
     deck_cards: dict[str, dict[str, int]],
     deck_configs: dict[str, DeckConfig],
 ) -> None:
@@ -75,7 +67,7 @@ def _render_shared_deck_panels(
                 sub_panel_specs.append(
                     (
                         f"[bold yellow1]Common across shared decks ({common_count} cards)[/bold yellow1]",
-                        _shared_card_table(common_cards_list, current_deck_cards),
+                        card_table([(name, current_deck_cards[name]) for name in common_cards_list]),
                         len(common_cards_list),
                     )
                 )
@@ -94,7 +86,7 @@ def _render_shared_deck_panels(
                     sub_panel_specs.append(
                         (
                             f"[bold yellow1]{escape(shared_deck_name)} ({len(exclusive_cards)} cards)[/bold yellow1]",
-                            _shared_card_table(exclusive_cards, current_deck_cards),
+                            card_table([(name, current_deck_cards[name]) for name in exclusive_cards]),
                             len(exclusive_cards),
                         )
                     )
@@ -108,11 +100,8 @@ def _render_shared_deck_panels(
                     )
 
             sub_height = max(spec[2] for spec in sub_panel_specs) + 2
-            inner_grid = Table.grid(expand=True)
-            for _ in sub_panel_specs:
-                inner_grid.add_column(ratio=1)
-            inner_grid.add_row(
-                *[
+            inner_grid = panel_row(
+                [
                     Panel(renderable, title=title, border_style="dim", height=sub_height)
                     for title, renderable, _ in sub_panel_specs
                 ]
@@ -122,7 +111,7 @@ def _render_shared_deck_panels(
             )
         else:
             shared_deck_name = shared_decks[0]
-            card_tbl = _shared_card_table(list(shared_cards_info.keys()), current_deck_cards)
+            card_tbl = card_table([(name, current_deck_cards[name]) for name in shared_cards_info])
             inner_panel = Panel(
                 card_tbl,
                 title=f"[bold yellow1]{escape(shared_deck_name)} ({len(shared_cards_info)} cards)[/bold yellow1]",
@@ -146,3 +135,17 @@ def _render_shared_deck_panels(
         else:
             height = chunk[0][2] + 2
             console.print(Panel(chunk[0][0], title=chunk[0][1], border_style="dim", height=height))
+
+
+def render_failed_deck_warning(deck_name: str) -> None:
+    err_console.print(f"[yellow]⚠[/yellow] Failed to retrieve [bold]{escape(deck_name)}[/bold] deck from Moxfield.")
+
+
+def render_deck_sync_panel(results: list[DeckFetchResult]) -> None:
+    tbl = Table(box=None, show_header=True, header_style="bold")
+    tbl.add_column("Deck")
+    tbl.add_column("Status")
+    tbl.add_column("File")
+    for r in results:
+        tbl.add_row(r.name, "[green]✓[/green]" if r.ok else "[red]✗ failed[/red]", r.file)
+    console.print(Panel(tbl, title="Deck sync", border_style="blue"))

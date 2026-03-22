@@ -3,15 +3,18 @@ from collections import Counter
 
 import click
 from rich.markup import escape
-from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.table import Table
 
 from mtg_utils.commands.update_card_library.logic import DeckFetchResult, _compute_card_usage
-from mtg_utils.commands.update_card_library.render import _render_shared_deck_panels, _render_unavailable_warnings
+from mtg_utils.commands.update_card_library.render import (
+    render_deck_sync_panel,
+    render_failed_deck_warning,
+    render_shared_deck_panels,
+    render_unavailable_warnings,
+)
 from mtg_utils.utils.cards import parse_card_list
 from mtg_utils.utils.config import DEFAULT_CONFIG_FILE, AppConfig, DeckConfig, load_config
-from mtg_utils.utils.console import console, err_console
+from mtg_utils.utils.console import console
 from mtg_utils.utils.moxfield_api import get_deck_list, get_library, library_sort_key
 from mtg_utils.utils.readers import read_list
 
@@ -63,8 +66,7 @@ def _calculate_available_cards(
     purchased_file = config.purchased_formatted_file
     if purchased_file:
         try:
-            for entry in read_list(purchased_file):
-                purchased_names.add(entry.split(" ", 1)[1])
+            purchased_names = set(parse_card_list(read_list(purchased_file)).keys())
         except FileNotFoundError:
             pass
 
@@ -73,8 +75,8 @@ def _calculate_available_cards(
 
     used_cards, unavailable_cards, deck_configs = _compute_card_usage(library_dict, deck_cards, decks)
 
-    _render_unavailable_warnings(unavailable_cards, purchased_names)
-    _render_shared_deck_panels(deck_cards, deck_configs)
+    render_unavailable_warnings(unavailable_cards, purchased_names)
+    render_shared_deck_panels(deck_cards, deck_configs)
 
     available_cards = sorted(
         [
@@ -111,18 +113,10 @@ def update_card_library(config_file) -> None:
                         file.write(f"{card}\n")
                 results.append(DeckFetchResult(deck_name, True, deck_info.file, deck, deck_info))
             else:
-                err_console.print(
-                    f"[yellow]⚠[/yellow] Failed to retrieve [bold]{escape(deck_name)}[/bold] deck from Moxfield."
-                )
-                results.append(DeckFetchResult(deck_name, False, "\u2014", [], deck_info))
+                render_failed_deck_warning(deck_name)
+                results.append(DeckFetchResult(deck_name, False, "—", [], deck_info))
 
-    tbl = Table(box=None, show_header=True, header_style="bold")
-    tbl.add_column("Deck")
-    tbl.add_column("Status")
-    tbl.add_column("File")
-    for r in results:
-        tbl.add_row(r.name, "[green]✓[/green]" if r.ok else "[red]✗ failed[/red]", r.file)
-    console.print(Panel(tbl, title="Deck sync", border_style="blue"))
+    render_deck_sync_panel(results)
 
     decks = [(r.name, r.cards, r.config) for r in results if r.ok]
 

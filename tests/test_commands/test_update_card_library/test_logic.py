@@ -2,6 +2,12 @@ import pytest
 
 from mtg_utils.commands.update_card_library import DeckFetchResult
 from mtg_utils.commands.update_card_library.logic import _compute_card_usage
+from mtg_utils.utils.config import DeckConfig
+
+
+def _deck_cfg(**kwargs) -> DeckConfig:
+    defaults = {"id": "fake", "file": "fake.txt"}
+    return DeckConfig(**(defaults | kwargs))
 
 
 @pytest.mark.unit
@@ -15,16 +21,17 @@ class TestComputeCardUsage:
     def test_card_fully_available(self):
         library = {"Lightning Bolt": 4}
         deck_cards = {"red": {"Lightning Bolt": 2}}
-        decks = [("red", ["2 Lightning Bolt"], {})]
+        cfg = _deck_cfg()
+        decks = [("red", ["2 Lightning Bolt"], cfg)]
         used, unavailable, configs = _compute_card_usage(library, deck_cards, decks)
         assert used == {"Lightning Bolt": 2}
         assert unavailable == {}
-        assert configs == {"red": {}}
+        assert configs == {"red": cfg}
 
     def test_card_unavailable(self):
         library = {"Island": 1}
         deck_cards = {"big": {"Island": 4}}
-        decks = [("big", ["4 Island"], {})]
+        decks = [("big", ["4 Island"], _deck_cfg())]
         used, unavailable, configs = _compute_card_usage(library, deck_cards, decks)
         assert "big" in unavailable
         card_name, msg = unavailable["big"][0]
@@ -40,8 +47,8 @@ class TestComputeCardUsage:
             "beta": {"Island": 1},
         }
         decks = [
-            ("alpha", ["1 Island"], {}),
-            ("beta", ["1 Island"], {}),
+            ("alpha", ["1 Island"], _deck_cfg()),
+            ("beta", ["1 Island"], _deck_cfg()),
         ]
         used, unavailable, configs = _compute_card_usage(library, deck_cards, decks)
         assert "beta" in unavailable
@@ -57,8 +64,8 @@ class TestComputeCardUsage:
             "child": {"Lightning Bolt": 1},
         }
         decks = [
-            ("base", ["1 Lightning Bolt"], {}),
-            ("child", ["1 Lightning Bolt"], {"shared_decks": ["base"]}),
+            ("base", ["1 Lightning Bolt"], _deck_cfg()),
+            ("child", ["1 Lightning Bolt"], _deck_cfg(shared_decks=["base"])),
         ]
         used, unavailable, _ = _compute_card_usage(library, deck_cards, decks)
         # base consumes 1; child shares base's copy → 0 additional consumed
@@ -73,8 +80,8 @@ class TestComputeCardUsage:
             "child": {"Island": 3},
         }
         decks = [
-            ("base", ["1 Island"], {}),
-            ("child", ["3 Island"], {"shared_decks": ["base"]}),
+            ("base", ["1 Island"], _deck_cfg()),
+            ("child", ["3 Island"], _deck_cfg(shared_decks=["base"])),
         ]
         used, unavailable, _ = _compute_card_usage(library, deck_cards, decks)
         assert "child" in unavailable
@@ -85,7 +92,7 @@ class TestComputeCardUsage:
     def test_returns_deck_configs(self):
         library = {"Island": 2}
         deck_cards = {"d": {"Island": 1}}
-        cfg = {"id": "abc", "file": "x.txt"}
+        cfg = DeckConfig(id="abc", file="x.txt")
         decks = [("d", ["1 Island"], cfg)]
         _, _, configs = _compute_card_usage(library, deck_cards, decks)
         assert configs == {"d": cfg}

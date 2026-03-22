@@ -12,10 +12,14 @@ def card_table(cards: list[tuple[str, int]], row_style: str = "") -> Table:
     return table
 
 
+def panel_row(panels: list) -> Table:
+    grid = Table.grid(expand=True)
+    for _ in panels:
+        grid.add_column(ratio=1)
+    grid.add_row(*panels)
+    return grid
+
+
 def side_by_side(left, right) -> Table:
     """Render two Rich renderables side-by-side in equal-width columns."""
-    grid = Table.grid(expand=True)
-    grid.add_column(ratio=1)
-    grid.add_column(ratio=1)
-    grid.add_row(left, right)
-    return grid
+    return panel_row([left, right])
