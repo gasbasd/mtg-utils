@@ -5,9 +5,12 @@ from mtg_utils.commands.update_card_library.logic import _compute_card_usage
 from mtg_utils.utils.config import DeckConfig
 
 
-def _deck_cfg(**kwargs) -> DeckConfig:
-    defaults = {"id": "fake", "file": "fake.txt"}
-    return DeckConfig(**(defaults | kwargs))
+def _deck_cfg(
+    id: str = "fake",
+    file: str = "fake.txt",
+    shared_decks: list[str] | None = None,
+) -> DeckConfig:
+    return DeckConfig(id=id, file=file, shared_decks=shared_decks or [])
 
 
 @pytest.mark.unit
@@ -72,6 +75,30 @@ class TestComputeCardUsage:
         assert used.get("Lightning Bolt") == 1
         assert unavailable == {}
 
+    def test_overlapping_shared_decks_incremental_counting(self):
+        """Regression: overlapping shared dependencies must not over/under-count reusable cards."""
+        library = {"Snow-Covered Island": 16}
+        deck_cards = {
+            "gretchen": {"Snow-Covered Island": 14},
+            "weavers": {"Snow-Covered Island": 12},
+            "tatyova": {"Snow-Covered Island": 16},
+        }
+        decks = [
+            ("gretchen", ["14 Snow-Covered Island"], _deck_cfg()),
+            ("weavers", ["12 Snow-Covered Island"], _deck_cfg(shared_decks=["gretchen"])),
+            (
+                "tatyova",
+                ["16 Snow-Covered Island"],
+                _deck_cfg(shared_decks=["gretchen", "weavers"]),
+            ),
+        ]
+
+        used, unavailable, _ = _compute_card_usage(library, deck_cards, decks)
+
+        # Expected consumption: gretchen=14, weavers=0 (fully shared), tatyova=2 (16-14).
+        assert used == {"Snow-Covered Island": 16}
+        assert "tatyova" not in unavailable
+
     def test_shared_decks_details_in_unavailable_message(self):
         """When a card is unavailable and shared_details is non-empty, 'sharing:' appears."""
         library = {}  # nothing owned
@@ -101,14 +128,46 @@ class TestComputeCardUsage:
 @pytest.mark.unit
 class TestDeckFetchResult:
     def test_named_field_access(self):
-        r = DeckFetchResult("red", True, "decks/red.txt", ["1 Mountain"], {"id": "x"})
+        r = DeckFetchResult("red", True, "decks/red.txt", ["1 Mountain"], _deck_cfg())
         assert r.name == "red"
         assert r.ok is True
         assert r.file == "decks/red.txt"
         assert r.cards == ["1 Mountain"]
-        assert r.config == {"id": "x"}
 
     def test_failed_result(self):
-        r = DeckFetchResult("bad", False, "—", [], {})
+        r = DeckFetchResult("bad", False, "—", [], _deck_cfg())
         assert r.ok is False
         assert r.cards == []
+
+    def test_circular_shared_deck_reference(self):
+        """Test circular shared deck detection: A shares from B, B shares from A."""
+        library = {"Island": 10}
+        deck_cards = {
+            "alpha": {"Island": 5},
+            "beta": {"Island": 5},
+        }
+        # Create circular reference: alpha -> beta -> alpha
+        decks = [
+            ("alpha", ["5 Island"], _deck_cfg(shared_decks=["beta"])),
+            ("beta", ["5 Island"], _deck_cfg(shared_decks=["alpha"])),
+        ]
+        used, unavailable, _ = _compute_card_usage(library, deck_cards, decks)
+        # Both should be able to share, but circular ref should be handled
+        assert "alpha" not in unavailable
+        assert "beta" not in unavailable
+
+    def test_zero_quantity_in_shared_deck(self):
+        """Test that a deck with 0 copies of a card doesn't break sharing."""
+        library = {"Mountain": 2}
+        deck_cards = {
+            "base": {"Mountain": 0},  # 0 copies of the card
+            "child": {"Mountain": 2},
+        }
+        decks = [
+            ("base", ["0 Mountain"], _deck_cfg()),  # 0 quantity deck
+            ("child", ["2 Mountain"], _deck_cfg(shared_decks=["base"])),
+        ]
+        used, unavailable, _ = _compute_card_usage(library, deck_cards, decks)
+        # Child should use both from library since base has 0
+        assert used == {"Mountain": 2}
+        assert unavailable == {}

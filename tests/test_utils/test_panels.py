@@ -1,7 +1,7 @@
 import pytest
 from rich.table import Table
 
-from mtg_utils.utils.panels import card_table, panel_row
+from mtg_utils.utils.panels import card_table, panel_row, side_by_side
 
 
 @pytest.mark.unit
@@ -44,3 +44,14 @@ class TestPanelRow:
         result = panel_row([Panel("x")])
         assert isinstance(result, Table)
         assert len(result.columns) == 1
+
+
+@pytest.mark.unit
+def test_side_by_side_returns_expandable_two_column_row():
+    from rich.panel import Panel
+
+    result = side_by_side(Panel("left"), Panel("right"))
+
+    assert isinstance(result, Table)
+    assert len(result.columns) == 2
+    assert result.expand is True

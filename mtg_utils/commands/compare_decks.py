@@ -53,18 +53,15 @@ def compare_decks(deck1_file: str, deck2_file: str) -> None:
         )
 
     if unique_to_deck1 and unique_to_deck2:
-        height = max(len(unique_to_deck1), len(unique_to_deck2)) + 2
         panel1 = Panel(
             card_table(unique_to_deck1, row_style="cyan"),
             title=f"Only in {escape(deck1_file)}: {total_unique_to_deck1_qty} ({len(unique_to_deck1)} unique)",
             border_style="cyan",
-            height=height,
         )
         panel2 = Panel(
             card_table(unique_to_deck2, row_style="magenta"),
             title=f"Only in {escape(deck2_file)}: {total_unique_to_deck2_qty} ({len(unique_to_deck2)} unique)",
             border_style="magenta",
-            height=height,
         )
         console.print(side_by_side(panel1, panel2))
     elif unique_to_deck1:

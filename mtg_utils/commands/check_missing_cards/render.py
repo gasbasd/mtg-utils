@@ -18,8 +18,6 @@ def render_results(
 ) -> None:
     console.print(Rule(f"[bold]Total cards in deck: {total}[/bold]"))
 
-    panel_height = max(len(available_in_deck), len(completely_missing_cards) if completely_missing_cards else 1) + 2
-
     total_available_qty = sum(int(card.split(" ", 1)[0]) for card in available_in_deck)
     if available_in_deck:
         tbl = Table(box=None, show_header=False, padding=(0, 1, 0, 0))
@@ -34,7 +32,6 @@ def render_results(
             tbl,
             title=f"Available: {total_available_qty} ({len(available_in_deck)} unique)",
             border_style="green",
-            height=panel_height,
         )
     else:
         avail_panel = None
@@ -50,10 +47,9 @@ def render_results(
             tbl,
             title=f"Missing: {total_completely_missing} ({len(completely_missing_cards)} unique)",
             border_style="red",
-            height=panel_height,
         )
     else:
-        missing_panel = Panel("[green]✓ All cards available![/green]", border_style="green", height=panel_height)
+        missing_panel = Panel("[green]✓ All cards available![/green]", border_style="green")
 
     if avail_panel:
         console.print(side_by_side(avail_panel, missing_panel))
@@ -79,7 +75,6 @@ def render_results(
         deck_items = sorted(cards_by_deck.items())
         for i in range(0, len(deck_items), 3):
             row_decks = deck_items[i : i + 3]
-            row_height = max(sum(1 for _, _, usable_qty in cards if usable_qty > 0) for _, cards in row_decks) + 2
             row_panels = []
             for deck_name, cards in row_decks:
                 total_needed = sum(usable_qty for _, _, usable_qty in cards if usable_qty > 0)
@@ -96,7 +91,6 @@ def render_results(
                         tbl,
                         title=f"{escape(deck_name)} — {total_needed} cards needed",
                         border_style="dim",
-                        height=row_height,
                     )
                 )
             console.print(panel_row(row_panels))

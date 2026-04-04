@@ -1,5 +1,6 @@
 import pytest
 
+from mtg_utils.commands.check_missing_cards import render as render_module
 from mtg_utils.commands.check_missing_cards.render import render_results
 
 
@@ -72,3 +73,65 @@ class TestRenderResults:
             owned_dict={},
             total=1,
         )
+
+    def test_available_and_missing_panels_do_not_force_height(self, monkeypatch):
+        """Regression guard: adjacent availability panels should use natural height."""
+        panel_kwargs: list[dict] = []
+
+        class DummyPanel:
+            def __init__(self, _renderable, **kwargs):
+                panel_kwargs.append(kwargs)
+
+        monkeypatch.setattr(render_module, "Panel", DummyPanel)
+        monkeypatch.setattr(render_module.console, "print", lambda *_args, **_kwargs: None)
+        monkeypatch.setattr(render_module, "side_by_side", lambda left, right: (left, right))
+        monkeypatch.setattr(render_module, "panel_row", lambda panels: panels)
+
+        render_results(
+            available_in_deck=["2 Island"],
+            completely_missing_cards=[("Forest", 1), ("Swamp", 1), ("Mountain", 1)],
+            partially_missing_cards=[],
+            cards_by_deck={},
+            purchased_names=set(),
+            owned_dict={"Island": 2},
+            total=5,
+        )
+
+        titles = [kwargs.get("title", "") for kwargs in panel_kwargs]
+        assert any(title.startswith("Available:") for title in titles)
+        assert any(title.startswith("Missing:") for title in titles)
+        assert all(
+            "height" not in kwargs
+            for kwargs in panel_kwargs
+            if kwargs.get("title", "").startswith(("Available:", "Missing:"))
+        )
+
+    def test_deck_breakdown_panels_do_not_force_height(self, monkeypatch):
+        """Regression guard: deck panels in rows should not force clipped heights."""
+        panel_kwargs: list[dict] = []
+
+        class DummyPanel:
+            def __init__(self, _renderable, **kwargs):
+                panel_kwargs.append(kwargs)
+
+        monkeypatch.setattr(render_module, "Panel", DummyPanel)
+        monkeypatch.setattr(render_module.console, "print", lambda *_args, **_kwargs: None)
+        monkeypatch.setattr(render_module, "side_by_side", lambda left, right: (left, right))
+        monkeypatch.setattr(render_module, "panel_row", lambda panels: panels)
+
+        render_results(
+            available_in_deck=["1 Island"],
+            completely_missing_cards=[],
+            partially_missing_cards=[("Sol Ring", 1, "alpha (1)")],
+            cards_by_deck={
+                "alpha": [("Sol Ring", 1, 1)],
+                "beta": [("Counterspell", 1, 1), ("Brainstorm", 1, 1), ("Ponder", 1, 1)],
+            },
+            purchased_names=set(),
+            owned_dict={"Island": 1},
+            total=2,
+        )
+
+        deck_titles = [kwargs.get("title", "") for kwargs in panel_kwargs if "cards needed" in kwargs.get("title", "")]
+        assert len(deck_titles) == 2
+        assert all("height" not in kwargs for kwargs in panel_kwargs if "cards needed" in kwargs.get("title", ""))

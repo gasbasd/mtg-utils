@@ -1,11 +1,11 @@
 ---
-name: software-engineer
+name: run-command
 description: 'Maintain MTG collection and deck data in this repo. Use for updating the card library from Moxfield, recording purchased cards, checking missing cards for a deck, comparing deck files, adjusting config-driven deck sharing, or editing card_library and decklists data while preserving existing CLI workflows and text formats.'
 argument-hint: 'Describe the deck, card-library, config, or command workflow to update'
 user-invocable: true
 ---
 
-# Software Engineer
+# Run Command
 
 ## What This Skill Does
 
