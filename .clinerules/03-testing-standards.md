@@ -57,6 +57,7 @@ tests/
 
 - **Target**: 100% coverage
 - Configured in `pyproject.toml`:
+- When checking for coverage always run entire test suite
 
 ```toml
 [tool.coverage.report]

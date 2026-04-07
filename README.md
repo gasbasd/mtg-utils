@@ -7,6 +7,7 @@ A command-line utility for managing Magic: The Gathering card collections, decks
 - Track your card collection from Moxfield
 - Manage multiple decks
 - Check which cards you're missing for a deck
+- Generate a consolidated shopping list across multiple planned decks
 - Find cards in your collection that are used in multiple decks
 - Keep track of newly purchased cards
 
@@ -122,6 +123,29 @@ Or check against a Moxfield deck:
 ```sh
 mtg-utils check-missing-cards --moxfield-id your-moxfield-deck-id
 ```
+
+### Show Shopping List
+
+Generate a consolidated shopping list across multiple planned decks. Cards you need to buy are shown with the decks that requested them and which configured decks already use the card. Cards you already have are shown in a separate panel, with `*` marking cards sourced from your purchased file.
+
+```sh
+# Two local deck files
+mtg-utils show-shopping-list -d decklists/deck_a.txt -d decklists/deck_b.txt
+
+# Mix of local file and Moxfield deck
+mtg-utils show-shopping-list -d decklists/deck_a.txt -id your-moxfield-deck-id
+
+# Save the buy list to a file
+mtg-utils show-shopping-list -d decklists/deck_a.txt -o decklists/to_buy.txt
+```
+
+Options:
+
+- `-d / --deck-file` — path to a deck file (repeatable)
+- `-id / --moxfield-id` — Moxfield deck ID (repeatable)
+- `-o / --output-file` — write the buy list to a file in `{qty} {card name}` format (optional)
+
+> **Note:** Purchased cards (`purchased_formatted.txt`) only count toward your available pool for copies not already needed to fill a configured library deck.
 
 ## Directory Structure
 
