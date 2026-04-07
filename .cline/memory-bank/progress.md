@@ -5,7 +5,7 @@
 ### Completed Features
 
 | Feature | Status | Command |
-|---------|--------|---------|
+|-----|--------|---------|
 | Update card library | Complete | `mtg-utils update-library` |
 | Check missing cards | Complete | `mtg-utils check-missing-cards` |
 | Compare decks | Complete | `mtg-utils compare-decks` |
@@ -23,8 +23,8 @@
 
 ### Test Coverage
 
-- **148 tests passing** ✅
-- **Coverage: 99.62%** ✅
+- **154 tests passing** ✅
+- **Coverage: 100.00%** ✅
 - Target: 100% coverage
 
 ---
@@ -61,18 +61,18 @@
 ## Recent Session Changes
 
 | Change | Description |
-|---------|-----------|
+|---|---|
 | Modular Architecture | `list-decks` command now follows same pattern as `update_card_library` |
 | Decklist Output | `list-decks` now shows actual card contents with counts |
 | New Utils Module | Created `mtg_utils/utils/decklists.py` for rendering logic |
-| Test Updates | Added 14 new tests, 148 tests passing total |
+| Test Updates | Added 20 new tests, 154 tests passing total |
 
 ---
 
 ## Evolution of Project Decisions
 
 | Decision | Reason | Date |
-|-----------|--- ---- | --- |
+|---|---|---|
 | Use Poetry | Better dependency management | Project start |
 | Modular command structure | Easier to extend and maintain | Project start |
 | Rich for console output | Better UX and formatted tables | Project start |

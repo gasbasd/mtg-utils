@@ -5,7 +5,7 @@
 The mtg-utils project is actively maintained with the following structure:
 
 - **Core Package**: `mtg_utils/` - Main Python package
-- **Test Suite**: `tests/` - pytest-based tests (148 tests passing)
+- **Test Suite**: `tests/` - pytest-based tests (154 tests passing)
 - **Configuration**: `config.json` - User configuration (not committed)
 - **Data Directory**: `card_library/` - Runtime-generated data (not committed)
 
@@ -40,7 +40,7 @@ The `list-decks` command has been completely refactored to:
 - Added tests: `tests/test_commands/test_list_decks/` (command, logic, render)
 - Added tests: `tests/test_utils/test_decklists.py`
 - Updated: `tests/test_list_decks.py`
-- **148 tests passing** with 99.62% coverage
+- **154 tests passing** with 100.00% coverage
 
 ---
 
@@ -58,7 +58,7 @@ The `list-decks` command has been completely refactored to:
 - CLI built with Click for user-friendly interface
 - Rich library for beautiful console output
 - Pydantic for data validation
-- 100% test coverage target (currently 99.62%)
+- 100% test coverage target (currently achieved: 100.00%)
 - Modular command structure for maintainability
 
 ---

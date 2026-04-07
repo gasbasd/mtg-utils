@@ -1,6 +1,6 @@
 ---
 name: "CI Engineer"
-description: "Use for GitHub Actions and CI/CD tasks: creating or updating workflows (lint, test, coverage, release), configuring branch protection, adding job matrices, managing secrets references, setting up caching, or debugging failing pipeline runs. DO NOT use for application code changes or test authoring."
+description: "Use when changing automation in .github workflows or CI policy: GitHub Actions jobs, triggers, caching, matrices, artifacts, and pipeline debugging for lint/coverage/release. Do not use for application code or pytest authoring."
 tools: [read, search, edit, execute]
 agents: []
 argument-hint: "Describe the workflow to create, fix, or improve (e.g. 'add a lint job', 'cache Poetry dependencies', 'run tests on push to main')"

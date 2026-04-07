@@ -1,6 +1,6 @@
 ---
 name: "QA Engineer"
-description: "Use when writing, fixing, or reviewing tests for mtg-utils Python code: unit tests for commands (update_card_library, check_missing_cards, compare_decks), utility functions (config, readers, moxfield_api), CLI integration tests, or edge cases in collection math and shared_decks logic. DO NOT use for feature implementation or data file changes."
+description: "Use when writing, fixing, or reviewing pytest coverage for mtg-utils behavior: command tests (update-library, check-missing-cards, compare-decks, list-decks), utility tests, CLI integration tests, and edge cases in collection math/shared_decks logic. Do not use for production implementation, CI workflow edits, or feature design."
 tools: [read, search, edit, execute]
 agents: []
 argument-hint: "Describe the module or command to test and any edge cases to cover (e.g. 'shared_decks math in update_card_library', 'check-missing-cards via Moxfield ID')"

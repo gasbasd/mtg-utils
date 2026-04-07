@@ -1,7 +1,7 @@
 ---
 name: "Software Engineer"
-description: "Use when implementing or changing Python code in this repo: adding or modifying CLI commands (update_card_library, check_missing_cards, compare_decks, list_decks), fixing bugs in command logic, updating config handling, editing card_library or decklists data files, or any other production source change. Expert in clean code and clean architecture. DO NOT use for tests, CI config, or feature design."
-tools: [execute, read, edit, search, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment]
+description: "Use when implementing production changes in mtg-utils: Python command modules, command logic/rendering, config handling, collection math, and repo data files (card_library/decklists). Do not use for writing tests, CI workflows, or feature design."
+tools: [execute, read, edit, search]
 agents: []
 argument-hint: "Describe the command, module, or data file to change and what behavior to implement or fix"
 user-invocable: true
