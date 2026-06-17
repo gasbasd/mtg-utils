@@ -1,0 +1,77 @@
+1 Tatyova, Benthic Druid
+1 Arcane Denial
+1 Archaeomancer
+1 Bant Panorama
+1 Blink of an Eye
+1 Brainstorm
+1 Brokers Hideout
+1 Capsize
+1 Command Tower
+1 Counterspell
+1 Crop Rotation
+1 Cultivate
+1 Daze
+1 Deep Analysis
+1 Deprive
+1 Dispel
+1 Dizzy Spell
+1 Drift of Phantasms
+1 Expedition Map
+1 Explore
+1 Farseek
+1 Frantic Search
+1 Ghostly Flicker
+1 Growth Spiral
+1 Gush
+1 Halimar Depths
+1 Harrow
+1 High Tide
+1 Impulse
+1 Intervene
+1 Into the North
+1 Into the Roil
+1 Kodama's Reach
+1 Llanowar Scout
+1 Lórien Revealed
+1 Mana Leak
+1 Marauding Brinefang
+1 Memory Lapse
+1 Merchant Scroll
+1 Mnemonic Wall
+1 Moment's Peace
+1 Muddle the Mixture
+1 Murmuring Mystic
+1 Mystic Sanctuary
+1 Nature's Lore
+1 Negate
+1 Peregrine Drake
+1 Ponder
+1 Preordain
+1 Relic of Progenitus
+1 Return to Nature
+1 Rimewood Falls
+1 Sakura-Tribe Elder
+1 Sakura-Tribe Scout
+1 Scaled Herbalist
+1 Shipwreck Dowser
+1 Shire Terrace
+1 Shoreline Ranger
+1 Simic Growth Chamber
+1 Skyshroud Ranger
+1 Spoils of Victory
+1 Sporemound
+1 Springbloom Druid
+1 Tangled Islet
+1 Terramorphic Expanse
+1 Three Visits
+1 Tidal Bore
+1 Tragic Lesson
+1 Treasure Cruise
+1 Unable to Scream
+1 Utter Insignificance
+1 Vibrant Cityscape
+1 Walking Atlas
+1 Whispers of the Muse
+1 Witness Protection
+16 Snow-Covered Island
+9 Snow-Covered Forest

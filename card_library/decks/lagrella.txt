@@ -1,0 +1,94 @@
+1 Lagrella, the Magpie
+1 Arcane Denial
+1 Arcane Signet
+1 Archaeomancer
+1 Arctic Treeline
+1 Azorius Chancery
+1 Azorius Signet
+1 Bant Panorama
+1 Blink of an Eye
+1 Bonder's Ornament
+1 Botanical Plaza
+1 Candlekeep Sage
+1 Capsize
+1 Cloud of Faeries
+1 Cloudshift
+1 Coiling Oracle
+1 Command Tower
+1 Counterspell
+1 Dawnbringer Cleric
+1 Deprive
+1 Dispel
+1 Displace
+1 Dizzy Spell
+1 Drift of Phantasms
+1 Echoing Truth
+1 Elvish Visionary
+1 Ephemerate
+1 Essence Flux
+1 Essence Warden
+1 Farhaven Elf
+1 Farseek
+1 Flicker of Fate
+1 Gallant Citizen
+1 Ghostly Flicker
+1 Glacial Floodplain
+1 Helpful Hunter
+1 High Tide
+1 Icewind Stalwart
+1 Idyllic Beachfront
+1 Inspiring Overseer
+1 Into the North
+1 Into the Roil
+1 Llanowar Visionary
+1 Logic Knot
+1 Lonely Arroyo
+1 Lonely Sandbar
+1 Lórien Revealed
+1 Memory Lapse
+1 Merchant Scroll
+1 Mnemonic Wall
+1 Momentary Blink
+1 Muddle the Mixture
+1 Mulldrifter
+1 Mystic Sanctuary
+1 Otherworldly Journey
+1 Path of Ancestry
+1 Pegasus Guardian // Rescue the Foal
+1 Peregrine Drake
+1 Plains
+1 Planar Incision
+1 Pond Prophet
+1 Ponder
+1 Preordain
+1 Quandrix Campus
+1 Radiant Grove
+1 Reclaim
+1 Rimewood Falls
+1 Sage's Row Denizen
+1 Salvager of Secrets
+1 Sea Gate Oracle
+1 Secluded Steppe
+1 Selesnya Sanctuary
+1 Selesnya Signet
+1 Shipwreck Dowser
+1 Simic Growth Chamber
+1 Simic Signet
+1 Snow-Covered Forest
+1 Snow-Covered Island
+1 Snow-Covered Plains
+1 Soul Warden
+1 Soul's Attendant
+1 Spirited Companion
+1 Step Through
+1 Sunscape Familiar
+1 Suture Priest
+1 Tangled Islet
+1 Tranquil Landscape
+1 Tranquil Thicket
+1 Treasure Cruise
+1 Utopia Sprawl
+1 Wild Growth
+1 Wood Elves
+2 Forest
+6 Island

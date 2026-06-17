@@ -1,0 +1,46 @@
+{
+  "binder_id": "vw7sTSczsUaDX1K9FO5tgg",
+  "decks": {
+    "soulherder": {
+      "file": "card_library/decks/soulherder.txt",
+      "id": "nXiGDQE2TEKI_aLH0r-JJg"
+    },
+    "lagrella": {
+      "file": "card_library/decks/lagrella.txt",
+      "id": "eJwRx7yYckSTAhvDpWSGjw",
+      "shared_decks": ["soulherder"]
+    },
+    "gretchen": {
+      "file": "card_library/decks/gretchen.txt",
+      "id": "YJ7vkA6inkyDAOL8GEn4Lw"
+    },
+    "weavers": {
+      "file": "card_library/decks/weavers.txt",
+      "id": "hiBocff350u2gCkLNnqWuw",
+      "shared_decks": ["gretchen"]
+    },
+    "tatyova": {
+      "file": "card_library/decks/tatyova.txt",
+      "id": "P_De6-2PmUysf9Iu1jg8dA",
+      "shared_decks": ["gretchen", "weavers"]
+    },
+    "venomthrope": {
+      "file": "card_library/decks/venomthrope.txt",
+      "id": "AgY2eD0ffEyEk5m3ZNXWSw"
+    },
+    "sivriss_agent": {
+      "file": "card_library/decks/sivriss_agent.txt",
+      "id": "dSejsBxAQEybcUbbudrqKA"
+    },
+    "tormod_ramirez": {
+      "file": "card_library/decks/tormod_ramirez.txt",
+      "id": "wsk6cJfyb0i6PavZpS7YcQ"
+    },
+    "zada": {
+      "file": "card_library/decks/zada.txt",
+      "id": "4Rc_Isvy20WsPxybvze3pw"
+    }
+  },
+  "purchased_file": "card_library/purchased.txt",
+  "purchased_formatted_file": "card_library/purchased_formatted.txt"
+}

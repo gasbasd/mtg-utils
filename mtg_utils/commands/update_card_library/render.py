@@ -50,7 +50,7 @@ def render_shared_deck_panels(
                     Panel(
                         card_table([(name, current_deck_cards[name]) for name in all_cards_list]),
                         title=f"[bold yellow1]All cards ({all_count} cards)[/bold yellow1]",
-                        border_style="dim",
+                        border_style="magenta",
                     )
                 ]
             )
@@ -204,7 +204,7 @@ def render_shared_deck_panels(
         for j in range(0, len(sub_panel_specs), 2):
             row_chunk = sub_panel_specs[j : j + 2]
             rows.append(
-                panel_row([Panel(renderable, title=title, border_style="dim") for title, renderable in row_chunk])
+                panel_row([Panel(renderable, title=title, border_style="magenta") for title, renderable in row_chunk])
             )
         inner_grid = Group(*rows)
         deck_panel_specs.append((inner_grid, f"[bold bright_cyan]{escape(deck_name)}[/bold bright_cyan]"))
@@ -212,11 +212,11 @@ def render_shared_deck_panels(
     for i in range(0, len(deck_panel_specs), 2):
         chunk = deck_panel_specs[i : i + 2]
         if len(chunk) == 2:
-            panel0 = Panel(chunk[0][0], title=chunk[0][1], border_style="dim")
-            panel1 = Panel(chunk[1][0], title=chunk[1][1], border_style="dim")
+            panel0 = Panel(chunk[0][0], title=chunk[0][1], border_style="magenta")
+            panel1 = Panel(chunk[1][0], title=chunk[1][1], border_style="magenta")
             console.print(side_by_side(panel0, panel1))
         else:
-            console.print(Panel(chunk[0][0], title=chunk[0][1], border_style="dim"))
+            console.print(Panel(chunk[0][0], title=chunk[0][1], border_style="magenta"))
 
 
 def render_failed_deck_warning(deck_name: str) -> None:

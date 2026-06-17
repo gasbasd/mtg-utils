@@ -1,0 +1,87 @@
+1 Tormod, the Desecrator
+1 Ghost of Ramirez DePietro
+1 Academy Wall
+1 Arcane Denial
+1 Arcane Signet
+1 Ash Barrens
+1 Ashnod's Altar
+1 Barren Moor
+1 Basilica Screecher
+1 Bender's Waterskin
+1 Bojuka Bog
+1 Brainstorm
+1 Coffin Purge
+1 Command Tower
+1 Compulsive Research
+1 Consider
+1 Contaminated Aquifer
+1 Counterspell
+1 Creeping Bloodsucker
+1 Crypt Incursion
+1 Darkness
+1 Death Rattle
+1 Deprive
+1 Deranged Assistant
+1 Dimir Aqueduct
+1 Dimir Signet
+1 Dispersal Shield
+1 Dizzy Spell
+1 Drift of Phantasms
+1 Escape Tunnel
+1 Everflowing Chalice
+1 Evolving Wilds
+1 Executioner's Capsule
+1 Extract a Confession
+1 Faerie Macabre
+1 Feed the Swarm
+1 Fellwar Stone
+1 Flood of Recollection
+1 Forbidden Alchemy
+1 Frantic Search
+1 Gempalm Polluter
+1 Honored Heirloom
+1 Ice Tunnel
+1 Imprisoned in the Moon
+1 Lonely Sandbar
+1 Lórien Revealed
+1 Malboro
+1 Merrow Bonegnawer
+1 Mind Stone
+1 Miscalculation
+1 Mistvault Bridge
+1 Mortuary Mire
+1 Muddle the Mixture
+1 Murmuring Mystic
+1 Myr Retriever
+1 Mystic Sanctuary
+1 Mystical Teachings
+1 Neurok Stealthsuit
+1 Nightscape Familiar
+1 Notion Rain
+1 Opal Palace
+1 Oubliette
+1 Perplex
+1 Pestilence
+1 Radical Idea
+1 Relic of Progenitus
+1 Robe of Mirrors
+1 Scion of Halaster
+1 Seat of the Synod
+1 Shred Memory
+1 Sky Diamond
+1 Snuff Out
+1 Stinkweed Imp
+1 Syphon Mind
+1 Tasigur's Cruelty
+1 Think Twice
+1 Treasure Cruise
+1 Trinket Mage
+1 Troll of Khazad-dûm
+1 Vault of Whispers
+1 Victim of Night
+1 Whispersilk Cloak
+1 Windrider Wizard
+1 Witch's Cottage
+1 Workshop Assistant
+6 Swamp
+9 Island

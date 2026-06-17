@@ -1,0 +1,77 @@
+1 Ley Weaver
+1 Lore Weaver
+1 Arbor Elf
+1 Arcane Denial
+1 Archaeomancer
+1 Avoid Fate
+1 Blighted Burgeoning
+1 Blossom Dryad
+1 Boreal Druid
+1 Brainstorm
+1 Burst of Strength
+1 Combat Tutorial
+1 Command Tower
+1 Confound
+1 Counterspell
+1 Dawn's Reflection
+1 Deep Analysis
+1 Dispel
+1 Drift of Phantasms
+1 Elvish Mystic
+1 Fertile Ground
+1 Frantic Search
+1 Freed from the Real
+1 Fyndhorn Elves
+1 Galvanic Alchemist
+1 Gift of Paradise
+1 Gift of the Viper
+1 Gitaxian Probe
+1 Glittering Frost
+1 Grafted Growth
+1 Impulse
+1 Intervene
+1 Juniper Order Druid
+1 Khalni Garden
+1 Krosan Restorer
+1 Llanowar Elves
+1 Lórien Revealed
+1 Magic Damper
+1 Market Festival
+1 Moment's Peace
+1 Muddle the Mixture
+1 Nature's Embrace
+1 Negate
+1 New Horizons
+1 Octopus Form
+1 Overgrowth
+1 Path of Ancestry
+1 Ponder
+1 Portent Tracker
+1 Preordain
+1 Rime Tender
+1 Rimewood Falls
+1 Saprazzan Skerry
+1 Sculptor of Winter
+1 Sheltered Aerie
+1 Shore Up
+1 Shrine Steward
+1 Simic Growth Chamber
+1 Snakeskin Veil
+1 Snap
+1 Step Through
+1 Stony Strength
+1 Tamiyo's Safekeeping
+1 Tangle
+1 Tangled Islet
+1 Unstable Experiment
+1 Unwind
+1 Utopia Sprawl
+1 Vedalken Aethermage
+1 Verdant Haven
+1 Vigean Graftmage
+1 Vines of Vastwood
+1 Vizier of Tumbling Sands
+1 Voyaging Satyr
+1 Wild Growth
+12 Snow-Covered Island
+13 Snow-Covered Forest

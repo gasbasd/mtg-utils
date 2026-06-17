@@ -1,0 +1,78 @@
+1 Venomthrope
+1 Aether Spellbomb
+1 Ancestral Mask
+1 Arbor Elf
+1 Arcane Denial
+1 Arcane Signet
+1 Aura Gnarlid
+1 Bender's Waterskin
+1 Bite Down
+1 Clever Conjurer
+1 Command Tower
+1 Cosmic Hunger
+1 Counterspell
+1 Deprive
+1 Drift of Phantasms
+1 Elvish Mystic
+1 Fallaji Archaeologist
+1 Favor of the Overbeing
+1 Forced Adaptation
+1 Frantic Strength
+1 Freed from the Real
+1 Frog Butler
+1 Fyndhorn Elves
+1 Goggles of Night
+1 Hands of Binding
+1 Haunted Cloak
+1 Hermetic Study
+1 Hidden Strings
+1 Horrific Assault
+1 Howl of the Hunt
+1 Imprisoned in the Moon
+1 Khalni Garden
+1 Last Thoughts
+1 Lignify
+1 Llanowar Elves
+1 Lose Focus
+1 Lórien Revealed
+1 Master's Rebuke
+1 Muddle the Mixture
+1 Murmuring Mystic
+1 Mystic Sanctuary
+1 Nature's Embrace
+1 Night Soil
+1 Nyxborn Hydra
+1 Ophidian Eye
+1 Path of Ancestry
+1 Piercing Exhale
+1 Predatory Hunger
+1 Psionic Gift
+1 Quirion Ranger
+1 Ram Through
+1 Reality Ripple
+1 Reclaim
+1 Revive the Shire
+1 Rimewood Falls
+1 Run Over
+1 Season of Renewal
+1 Seat of the Synod
+1 Security Bypass
+1 Seeker of Skybreak
+1 Shrine Steward
+1 Sigil of Sleep
+1 Simic Growth Chamber
+1 Snake Umbra
+1 Tandem Lookout
+1 Tangled Islet
+1 Tree of Tales
+1 Trinket Mage
+1 Unable to Scream
+1 Utopia Sprawl
+1 Vanishing
+1 Viridian Longbow
+1 Vizier of Tumbling Sands
+1 Wild Growth
+1 Winged Words
+1 Yavimaya Enchantress
+12 Forest
+12 Island

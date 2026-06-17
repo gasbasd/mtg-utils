@@ -1,0 +1,82 @@
+1 Sivriss, Nightmare Speaker
+1 Cloakwood Hermit
+1 Accursed Marauder
+1 Basking Broodscale
+1 Blisterpod
+1 Blood Pet
+1 Bojuka Bog
+1 Brainspoil
+1 Cabal Ritual
+1 Cadaver Imp
+1 Chain Devil
+1 Chatter of the Squirrel
+1 Command Tower
+1 Corrupted Conviction
+1 Costly Plunder
+1 Crypt Rats
+1 Culling the Weak
+1 Dark Ritual
+1 Darkmoss Bridge
+1 Deadly Dispute
+1 Demon's Disciple
+1 Dimir House Guard
+1 Dread Return
+1 Drey Keeper
+1 Dusk Legion Zealot
+1 Elvish Visionary
+1 Emergency Weld
+1 Eviscerator's Insight
+1 Evolution Witness
+1 Falkenrath Noble
+1 Fanatical Offering
+1 Feign Death
+1 Fetid Gargantua
+1 Final Flourish
+1 Fleshbag Marauder
+1 Fountainport Bell
+1 Generous Ent
+1 Gift of the Viper
+1 Golgari Rot Farm
+1 Gray Merchant of Asphodel
+1 Greedy Freebooter
+1 Haunted Mire
+1 Implement of Ferocity
+1 Infestation Sage
+1 Land Grant
+1 Mephitic Draught
+1 Metamorphosis
+1 Mirkwood Bats
+1 Nadier's Nightblade
+1 Nested Shambler
+1 Night Soil
+1 Night's Whisper
+1 Nihil Spellbomb
+1 Origin of Metalbending
+1 Oubliette
+1 Reckoner's Bargain
+1 Revive the Shire
+1 Rubblebelt Maverick
+1 Sadistic Glee
+1 Sakura-Tribe Elder
+1 Shambling Ghast
+1 Shred Memory
+1 Snuff Out
+1 Spore Frog
+1 Springleaf Drum
+1 Stony Strength
+1 Supernatural Stamina
+1 Tithing Blade // Consuming Sepulcher
+1 Tortured Existence
+1 Tree of Tales
+1 Troll of Khazad-dûm
+1 Undying Malice
+1 Unearth
+1 Urborg Repossession
+1 Vault of Whispers
+1 Village Rites
+1 Voracious Varmint
+1 Wirewood Herald
+1 Wither and Bloom
+1 Woodland Chasm
+12 Swamp
+8 Forest

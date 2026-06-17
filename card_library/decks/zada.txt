@@ -1,0 +1,76 @@
+1 Zada, Hedron Grinder
+1 Accelerate
+1 Ancestors' Aid
+1 Ancestral Anger
+1 Arcane Signet
+1 Battle Hymn
+1 Beetleback Chief
+1 Blazing Crescendo
+1 Brightstone Ritual
+1 Cradle of the Accursed
+1 Crimson Wisps
+1 Daring Discovery
+1 Desert of the Fervent
+1 Desperate Ritual
+1 Downhill Charge
+1 Dragon Fodder
+1 Dwarven Mine
+1 Empty the Warrens
+1 Emrakul's Hatcher
+1 Everflowing Chalice
+1 Expedite
+1 Fellwar Stone
+1 Felonious Rage
+1 Fire Diamond
+1 Fists of Flame
+1 Flick a Coin
+1 Forbidden Friendship
+1 Forgotten Cave
+1 Glimpse the Impossible
+1 Goblin Chirurgeon
+1 Goblin Instigator
+1 Goblin Matron
+1 Great Furnace
+1 Haste Magic
+1 Hordeling Outburst
+1 Infernal Plunge
+1 Inner Fire
+1 Iron Myr
+1 Krenko's Command
+1 Kuldotha Rebirth
+1 Lotus Petal
+1 Make Mischief
+1 Mana Geyser
+1 Manakin
+1 Might of the Meek
+1 Mind Stone
+1 Mogg War Marshal
+1 Ornithopter of Paradise
+1 Otherworldly Outburst
+1 Pyretic Ritual
+1 Ral's Reinforcements
+1 Rally at the Hornburg
+1 Reckless Charge
+1 Reckless Ransacking
+1 Renegade Tactics
+1 Rile
+1 Rite of Flame
+1 Rush of Adrenaline
+1 Samut's Sprint
+1 Sandstone Needle
+1 Seething Song
+1 Simian Spirit Guide
+1 Skirk Prospector
+1 Smoldering Crater
+1 Spawning Breath
+1 Star Compass
+1 Sudden Breakthrough
+1 The Autonomous Furnace
+1 Thought Vessel
+1 Titan's Strength
+1 Turn Inside Out
+1 Wayfarer's Bauble
+1 Wild Ride
+1 Witch's Mark
+1 Zookeeper Mechan
+25 Mountain

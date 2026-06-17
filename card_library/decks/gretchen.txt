@@ -1,0 +1,75 @@
+1 Gretchen Titchwillow
+1 Aether Spellbomb
+1 Arbor Elf
+1 Arcane Denial
+1 Archaeomancer
+1 Avoid Fate
+1 Blighted Burgeoning
+1 Blossom Dryad
+1 Capsize
+1 Clever Conjurer
+1 Command Tower
+1 Compulsive Research
+1 Counterspell
+1 Dawn's Reflection
+1 Daze
+1 Deprive
+1 Dispel
+1 Dizzy Spell
+1 Drift of Phantasms
+1 Fertile Ground
+1 Freed from the Real
+1 Galvanic Alchemist
+1 Gift of Paradise
+1 Glittering Frost
+1 Grafted Growth
+1 Gush
+1 High Tide
+1 Hydroform
+1 Immobilizing Ink
+1 Imprisoned in the Moon
+1 Impulse
+1 Juniper Order Druid
+1 Khalni Garden
+1 Krosan Restorer
+1 Ley Druid
+1 Lifespark Spellbomb
+1 Lórien Revealed
+1 Magic Damper
+1 Market Festival
+1 Memory Lapse
+1 Merchant Scroll
+1 Moment's Peace
+1 Muddle the Mixture
+1 Mystic Sanctuary
+1 Oboro Breezecaller
+1 Octopus Form
+1 Overgrowth
+1 Path of Ancestry
+1 Portent Tracker
+1 Reclaim
+1 Rewind
+1 Rime Tender
+1 Rimewood Falls
+1 Sapphire Charm
+1 Sculptor of Winter
+1 Shore Up
+1 Shrine Steward
+1 Simic Growth Chamber
+1 Snap
+1 Step Through
+1 Stone-Seeder Hierophant
+1 Tamiyo's Safekeeping
+1 Tangle
+1 Tangled Islet
+1 Unwind
+1 Urban Burgeoning
+1 Utopia Sprawl
+1 Vedalken Aethermage
+1 Verdant Haven
+1 Vines of Vastwood
+1 Vizier of Tumbling Sands
+1 Voyaging Satyr
+1 Wild Growth
+13 Snow-Covered Forest
+14 Snow-Covered Island
