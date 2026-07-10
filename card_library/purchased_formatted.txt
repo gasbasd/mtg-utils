@@ -1,5 +1,11 @@
+1 Airbending Lesson
+1 Antler Skulkin
+1 Arcbound Prototype
+1 Automated Artificer
 1 Basilica Screecher
+1 Battered Golem
 1 Beamtown Beatstick
+1 Boreal Druid
 1 Brass Knuckles
 1 Breath Weapon
 1 Call Damage Control
@@ -9,22 +15,31 @@
 1 Crashing Drawbridge
 1 Cryogen Relic
 1 Disruption Protocol
+1 Energy Tap
 1 Etherium Sculptor
 1 Experimental Synthesizer
 1 Fiery Cannonade
+1 Fleetfeather Sandals
 1 Foundry Inspector
+1 Fractured Powerstone
 1 Frogmite
 1 Futurist Forge
 1 Galvanic Blast
 1 Go Nuts!
 1 Golem-Skin Gauntlets
 1 Great Furnace
+1 Guardian Idol
+1 Guidelight Optimizer
+1 Hydraulic Helper
 1 Illvoi Light Jammer
 1 Iron Man, Master of Machines
+1 Izzet Boilerworks
 1 Lightning Bolt
 1 Machinesmith Automaton
 1 Melded Moxite
+1 Mental Journey
 1 Metallic Rebuke
+1 Mirrorshell Crab
 1 Molten Tributary
 1 Myr Enforcer
 1 Oaken Siren
@@ -32,17 +47,26 @@
 1 Project Deathlok Soldier
 1 Prying Blade
 1 Psychotic Fury
+1 Renowned Weaponsmith
 1 Reverse Engineer
 1 S.H.I.E.L.D. Spy Kit
+1 Sewer-veillance Cam
 1 Skred
 1 Smashing Spree
 1 Sojourner's Companion
+1 Spaceshift
+1 Spell Rupture
+1 Stern Lesson
 1 Sticky Fingers
 1 Stoic Rebuttal
+1 Treasure
 1 Utrom Monitor
 1 Volatile Fjord
+1 Voyager Quickwelder
 1 Welding Jar
 1 Wrenn's Resolve
 1 Zookeeper Mechan
 10 Snow-Covered Mountain
+2 Guidelight Pathmaker
 2 Silverbluff Bridge
+2 Vedalken Engineer

@@ -58,3 +58,27 @@ Zookeeper Mechan
 Molten Tributary
 Boreal Druid
 Treasure
+Izzet Boilerworks
+Airbending Lesson                                                                                   
+Antler Skulkin                                                                                      
+Arcbound Prototype                                                                                  
+Automated Artificer                                                                                 
+Battered Golem                                                                                      
+Energy Tap                                                                                          
+Fleetfeather Sandals                                                                                
+Fractured Powerstone                                                                                
+Guardian Idol                                                                                       
+Guidelight Optimizer                                                                                
+Guidelight Pathmaker                                                                                
+Hydraulic Helper                                                                                    
+Mental Journey                                                                                      
+Mirrorshell Crab                                                                                    
+Renowned Weaponsmith                                                                                
+Sewer-veillance Cam                                                                                 
+Spaceshift                                                                                          
+Spell Rupture                                                                                       
+Stern Lesson                                                                                        
+Vedalken Engineer                                                                                   
+Voyager Quickwelder                                                                                 
+Guidelight Pathmaker
+Vedalken Engineer
