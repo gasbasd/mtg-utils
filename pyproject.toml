@@ -43,7 +43,7 @@ exclude_also = ["# Show cards that are in the deck but not needed"]
 line-length = 120
 
 [tool.pyright]
-pythonVersion = "3.13"
+pythonVersion = "3.14"
 typeCheckingMode = "basic"
 include = ["mtg_utils"]
 
