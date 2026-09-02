@@ -7,6 +7,11 @@ htmlcov/
 .coverage.*
 .pytest_cache/
 .ruff_cache/
+venv/
+.venv/
+dist/
+build/
+*.egg-info/
 
 # personal scratch notes, not read by any command
 card_library/buylist.txt
