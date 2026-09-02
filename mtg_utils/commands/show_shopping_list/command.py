@@ -33,7 +33,7 @@ def show_shopping_list(
         owned_cards = read_list("card_library/available_cards.txt")
     except FileNotFoundError:
         err_console.print(
-            "[red]Error: card_library/available_cards.txt not found. Run [bold]update-library[/bold] first.[/red]"
+            "[red]Error: card_library/available_cards.txt not found. Run [bold]update-card-library[/bold] first.[/red]"
         )
         raise SystemExit(1)
 

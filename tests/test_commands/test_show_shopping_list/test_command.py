@@ -38,14 +38,14 @@ def test_no_sources():
 
 @pytest.mark.integration
 def test_available_cards_missing(tmp_path, monkeypatch):
-    """Missing available_cards.txt → exit 1 with update-library hint."""
+    """Missing available_cards.txt → exit 1 with update-card-library hint."""
     monkeypatch.chdir(tmp_path)
     deck = _write_deck(tmp_path, "deck", ["Sol Ring"])
 
     result = CliRunner().invoke(show_shopping_list, ["-d", str(deck)])
 
     assert result.exit_code == 1
-    assert "update-library" in result.output
+    assert "update-card-library" in result.output
 
 
 # ---------------------------------------------------------------------------

@@ -103,7 +103,7 @@ create example file:
 Update your card collection and decks from Moxfield:
 
 ```sh
-mtg-utils update-library
+mtg-utils update-card-library
 ```
 
 #### Record purchased cards
