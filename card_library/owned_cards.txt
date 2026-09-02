@@ -432,7 +432,6 @@
 1 Hoodwink
 1 Hordeling Outburst
 1 Horrific Assault
-1 Hot Dog Cart
 1 Howl of the Hunt
 2 Human Soldier
 1 Hydroform
@@ -624,7 +623,6 @@
 2 Opal Palace
 1 Ophidian Eye
 1 Opt
-1 Orazca Relic
 1 Orchard Strider
 1 Organ Hoarder
 1 Origin of Metalbending
@@ -678,9 +676,7 @@
 1 Priest of Ancient Lore
 1 Prismatic Lens
 1 Prismatic Strands
-1 Pristine Talisman
 1 Prized Statue
-1 Prophetic Prism
 1 Psionic Gift
 1 Psychic Impetus
 1 Pulse of Murasa
@@ -811,13 +807,11 @@
 1 Simian Spirit Guide
 3 Simic Growth Chamber
 1 Simic Signet
-1 Sisay's Ring
 1 Sivriss, Nightmare Speaker
 1 Skeleton
 1 Skirk Prospector
 1 Sky Diamond
 1 Skybridge Towers
-1 Skyscanner
 1 Skyshroud Claim
 1 Skyshroud Ranger
 1 Sleight of Hand
@@ -972,7 +966,6 @@
 1 Unmake
 1 Unstable Experiment
 1 Unwind
-1 Ur-Golem's Eye
 1 Urban Burgeoning
 1 Urborg Repossession
 3 Utopia Sprawl
@@ -1033,7 +1026,6 @@
 1 Wither and Bloom
 2 Witness Protection
 1 Wizard
-1 Wizard's Rockets
 1 Wood Elves
 1 Woodland Chasm
 1 Woodland Stream

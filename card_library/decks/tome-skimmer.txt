@@ -1,0 +1,82 @@
+1 Voracious Tome-Skimmer
+1 A.I.M. Labs
+1 Adventurer's Inn
+1 Alexi's Cloak
+1 Arcane Denial
+1 Arcane Signet
+1 Archaeomancer
+1 Basilica Screecher
+1 Bender's Waterskin
+1 Black Mage's Rod
+1 Bojuka Bog
+1 Boomerang
+1 Brainspoil
+1 Campfire
+1 Capsize
+1 Cast Down
+1 Cloud of Faeries
+1 Command Tower
+1 Confound
+1 Consider
+1 Contaminated Aquifer
+1 Counterspell
+1 Creeping Bloodsucker
+1 Crypt Incursion
+1 Crypt Rats
+1 Dark Ritual
+1 Darkness
+1 Dimir Aqueduct
+1 Dismal Backwater
+1 Dispel
+1 Displace
+1 Disrupt
+1 Doom Blade
+1 Essence Flux
+1 Foil
+1 Frantic Search
+1 Geyser Drake
+1 Ghastly Demise
+1 Ghostly Flicker
+1 Go for the Throat
+1 Gray Merchant of Asphodel
+1 High Tide
+1 Ice Tunnel
+1 Kami of Jealous Thirst
+1 Lofty Denial
+1 Lórien Revealed
+1 Maestros Theater
+1 Mana Leak
+1 Memory Lapse
+1 Merchant Scroll
+1 Mocking Sprite
+1 Muddle the Mixture
+1 Murmuring Mystic
+1 Mystic Sanctuary
+1 Mystical Teachings
+1 Negate
+1 Nightscape Familiar
+1 Opt
+1 Peregrine Drake
+1 Potioner's Trove
+1 Radiant Fountain
+1 Rewind
+1 Run Away Together
+1 Saiba Cryptomancer
+1 Shipwreck Dowser
+1 Shred Memory
+1 Sinister Hideout
+1 Snap
+1 Soul Manipulation
+1 Spell Pierce
+1 Spell Stutter
+1 Spellstutter Sprite
+1 Suffocating Fumes
+1 Tithing Blade // Consuming Sepulcher
+1 Tragic Slip
+1 Trespasser's Curse
+1 Troll of Khazad-dûm
+1 Unexpected Fangs
+1 Unwind
+1 Utter Insignificance
+14 Island
+6 Swamp
