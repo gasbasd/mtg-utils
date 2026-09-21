@@ -202,6 +202,19 @@ def test_check_missing_moxfield_id_with_sideboard_flag(setup_repo):
     assert "Pyroblast" in result.output
 
 
+@pytest.mark.integration
+def test_check_missing_deck_file_with_sideboard_section(setup_repo):
+    tmp_path = setup_repo(available_cards=["4 Lightning Bolt", "60 Mountain"])
+    deck_file = tmp_path / "burn.txt"
+    deck_file.write_text("4 Lightning Bolt\n56 Mountain\n# Sideboard\n3 Pyroblast\n")
+
+    result = CliRunner().invoke(cli, ["check-missing-cards", "--deck-file", str(deck_file)])
+
+    assert result.exit_code == 0
+    assert "Total cards in deck: 60 + 3 sideboard" in result.output
+    assert "Pyroblast (side)" in result.output
+
+
 # --- purchased marker (*) ---
 
 

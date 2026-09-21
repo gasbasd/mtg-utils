@@ -141,6 +141,8 @@ mtg-utils check-missing-cards --moxfield-id your-moxfield-deck-id
 mtg-utils check-missing-cards --moxfield-id your-moxfield-deck-id --sideboard
 ```
 
+When the deck has a sideboard the header reads `Total cards in deck: 60 + 15 sideboard` and cards that come from the sideboard are tagged `(side)` — or `(main+side)` when the deck runs copies in both boards.
+
 ### Show Shopping List
 
 Generate a consolidated shopping list across multiple planned decks. Cards you need to buy are shown with the decks that requested them and which configured decks already use the card. Cards you already have are shown in a separate panel, with `*` marking cards sourced from your purchased file.

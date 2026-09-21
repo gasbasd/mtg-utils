@@ -135,3 +135,64 @@ class TestRenderResults:
         deck_titles = [kwargs.get("title", "") for kwargs in panel_kwargs if "cards needed" in kwargs.get("title", "")]
         assert len(deck_titles) == 2
         assert all("height" not in kwargs for kwargs in panel_kwargs if "cards needed" in kwargs.get("title", ""))
+
+
+def _capture(monkeypatch, **kwargs) -> str:
+    import io
+
+    from rich.console import Console
+
+    buf = io.StringIO()
+    monkeypatch.setattr(render_module, "console", Console(file=buf, highlight=False, width=200))
+    render_results(**kwargs)
+    return buf.getvalue()
+
+
+@pytest.mark.unit
+class TestRenderResultsSideboard:
+    def test_header_without_sideboard_is_unchanged(self, monkeypatch):
+        out = _capture(
+            monkeypatch,
+            available_in_deck=["2 Island"],
+            completely_missing_cards=[],
+            partially_missing_cards=[],
+            cards_by_deck={},
+            purchased_names=set(),
+            owned_dict={"Island": 2},
+            total=2,
+        )
+        assert "Total cards in deck: 2" in out
+        assert "sideboard" not in out
+
+    def test_header_shows_sideboard_count(self, monkeypatch):
+        out = _capture(
+            monkeypatch,
+            available_in_deck=["2 Island"],
+            completely_missing_cards=[],
+            partially_missing_cards=[],
+            cards_by_deck={},
+            purchased_names=set(),
+            owned_dict={"Island": 2},
+            total=60,
+            sideboard_total=7,
+        )
+        assert "Total cards in deck: 60 + 7 sideboard" in out
+
+    def test_sideboard_cards_are_tagged_in_every_panel(self, monkeypatch):
+        out = _capture(
+            monkeypatch,
+            available_in_deck=["1 Pyroblast"],
+            completely_missing_cards=[("Smash to Smithereens", 3)],
+            partially_missing_cards=[("Lightning Bolt", 1, "burn (1)")],
+            cards_by_deck={"burn": [("Lightning Bolt", 4, 1)]},
+            purchased_names=set(),
+            owned_dict={"Pyroblast": 1},
+            total=60,
+            sideboard_total=7,
+            board_tags={"Pyroblast": "side", "Smash to Smithereens": "side", "Lightning Bolt": "main+side"},
+        )
+        assert "Pyroblast (side)" in out
+        assert "Smash to Smithereens (side)" in out
+        assert "Lightning Bolt (main+side)" in out
+        # The deck-breakdown panel below "In other decks" is tagged as well
+        assert out.count("Lightning Bolt (main+side)") == 2

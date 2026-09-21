@@ -58,3 +58,11 @@ def compute_missing_cards(
             available_in_deck.append(f"{deck_quantity} {card_name}")
 
     return completely_missing_cards, partially_missing_cards, available_in_deck, dict(cards_by_deck)
+
+
+def board_tags(mainboard: dict[str, int], sideboard: dict[str, int]) -> dict[str, str]:
+    """Label cards that live (at least partly) in the sideboard.
+
+    Returns {card_name: "side" | "main+side"}; mainboard-only cards get no entry.
+    """
+    return {name: "main+side" if name in mainboard else "side" for name in sideboard}
