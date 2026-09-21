@@ -4,6 +4,8 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from mtg_utils.utils.formats import DeckFormat
+
 DEFAULT_CONFIG_FILE = "config.json"
 
 
@@ -11,6 +13,7 @@ class DeckConfig(BaseModel):
     id: str
     file: str
     shared_decks: list[str] = []
+    format: DeckFormat = "commander"
 
 
 class AppConfig(BaseModel):

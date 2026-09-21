@@ -278,3 +278,78 @@ def test_custom_config_file(repo, tmp_path):
 
     assert result.exit_code == 0
     assert (tmp_path / "card_library" / "owned_cards.txt").exists()
+
+
+# ---------------------------------------------------------------------------
+# Deck formats
+# ---------------------------------------------------------------------------
+
+
+def _run_capturing_fetch(library, deck_lists):
+    """Like _run but also returns the get_deck_list mock so call args can be asserted."""
+    runner = CliRunner()
+    with patch("mtg_utils.commands.update_card_library.command.get_library", return_value=library):
+        with patch(
+            "mtg_utils.commands.update_card_library.command.get_deck_list", side_effect=deck_lists
+        ) as fetch:
+            result = runner.invoke(cli, ["update-card-library"])
+    return result, fetch
+
+
+@pytest.mark.integration
+def test_commander_deck_fetched_without_sideboard(repo):
+    repo(decks={"edh": {"file": "card_library/decks/edh.txt", "id": "d1"}})
+
+    result, fetch = _run_capturing_fetch(library=["1 Island"], deck_lists=[["1 Island"]])
+
+    assert result.exit_code == 0
+    fetch.assert_called_once_with("d1", include_sideboard=False)
+
+
+@pytest.mark.integration
+def test_pauper_deck_fetched_with_sideboard_and_written_with_marker(repo, tmp_path):
+    repo(decks={"burn": {"file": "card_library/decks/burn.txt", "id": "p1", "format": "pauper"}})
+    deck = ["4 Lightning Bolt", "56 Mountain", "# Sideboard", "4 Pyroblast"]
+
+    result, fetch = _run_capturing_fetch(library=["4 Lightning Bolt", "60 Mountain", "4 Pyroblast"], deck_lists=[deck])
+
+    assert result.exit_code == 0
+    fetch.assert_called_once_with("p1", include_sideboard=True)
+    written = (tmp_path / "card_library" / "decks" / "burn.txt").read_text().splitlines()
+    assert written == deck
+
+
+@pytest.mark.integration
+def test_sideboard_cards_consume_library_copies(repo, tmp_path):
+    repo(decks={"burn": {"file": "card_library/decks/burn.txt", "id": "p1", "format": "pauper"}})
+    deck = ["60 Mountain", "# Sideboard", "3 Pyroblast"]
+
+    result = _run(library=["60 Mountain", "4 Pyroblast"], deck_lists=[deck])
+
+    assert result.exit_code == 0
+    available = (tmp_path / "card_library" / "available_cards.txt").read_text()
+    assert "1 Pyroblast" in available
+
+
+@pytest.mark.integration
+def test_format_violations_are_warned(repo):
+    repo(decks={"burn": {"file": "card_library/decks/burn.txt", "id": "p1", "format": "pauper"}})
+    deck = ["5 Lightning Bolt", "53 Mountain", "# Sideboard", "1 Pyroblast"]
+
+    result = _run(library=["5 Lightning Bolt", "60 Mountain", "4 Pyroblast"], deck_lists=[deck])
+
+    assert result.exit_code == 0
+    assert "Format violations" in result.output
+    assert "burn" in result.output
+    assert "58 cards in mainboard (need at least 60)" in result.output
+    assert "5x Lightning Bolt" in result.output
+
+
+@pytest.mark.integration
+def test_legal_deck_has_no_format_warning(repo):
+    repo(decks={"edh": {"file": "card_library/decks/edh.txt", "id": "d1"}})
+
+    result = _run(library=["100 Island"], deck_lists=[["100 Island"]])
+
+    assert result.exit_code == 0
+    assert "Format violations" not in result.output

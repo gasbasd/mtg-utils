@@ -66,6 +66,31 @@ def test_load_config_deck_shared_decks(tmp_path):
 
 
 @pytest.mark.unit
+def test_load_config_deck_format_defaults_to_commander(tmp_path):
+    cfg = {"binder_id": "xyz", "decks": {"solo": {"id": "s1", "file": "decks/solo.txt"}}}
+    f = tmp_path / "config.json"
+    f.write_text(json.dumps(cfg))
+    assert load_config(str(f)).decks["solo"].format == "commander"
+
+
+@pytest.mark.unit
+def test_load_config_deck_format_pauper(tmp_path):
+    cfg = {"binder_id": "xyz", "decks": {"burn": {"id": "b1", "file": "decks/burn.txt", "format": "pauper"}}}
+    f = tmp_path / "config.json"
+    f.write_text(json.dumps(cfg))
+    assert load_config(str(f)).decks["burn"].format == "pauper"
+
+
+@pytest.mark.unit
+def test_load_config_deck_format_unknown_is_rejected(tmp_path):
+    cfg = {"binder_id": "xyz", "decks": {"burn": {"id": "b1", "file": "decks/burn.txt", "format": "modern"}}}
+    f = tmp_path / "config.json"
+    f.write_text(json.dumps(cfg))
+    with pytest.raises(ValidationError):
+        load_config(str(f))
+
+
+@pytest.mark.unit
 def test_load_config_creates_default_when_missing(tmp_path):
     cfg_path = str(tmp_path / "new_config.json")
     result = load_config(cfg_path)

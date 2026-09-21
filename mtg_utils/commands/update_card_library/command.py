@@ -9,12 +9,14 @@ from mtg_utils.commands.update_card_library.logic import DeckFetchResult, _compu
 from mtg_utils.commands.update_card_library.render import (
     render_deck_sync_panel,
     render_failed_deck_warning,
+    render_format_warnings,
     render_shared_deck_panels,
     render_unavailable_warnings,
 )
-from mtg_utils.utils.cards import parse_card_list
+from mtg_utils.utils.cards import parse_card_list, split_boards
 from mtg_utils.utils.config import DEFAULT_CONFIG_FILE, AppConfig, DeckConfig, load_config
 from mtg_utils.utils.console import console
+from mtg_utils.utils.formats import FORMATS, validate_deck
 from mtg_utils.utils.moxfield_api import get_deck_list, get_library, library_sort_key
 from mtg_utils.utils.readers import read_list
 
@@ -101,10 +103,12 @@ def update_card_library(config_file) -> None:
     config = load_config(config_file=config_file)
 
     results: list[DeckFetchResult] = []
+    violations: dict[str, list[str]] = {}
     with Progress(SpinnerColumn(), TextColumn("{task.description}"), console=console, transient=True) as progress:
         for deck_name, deck_info in config.decks.items():
+            rules = FORMATS[deck_info.format]
             task = progress.add_task(f"Fetching [bold]{escape(deck_name)}[/bold]\u2026", total=None)
-            deck = get_deck_list(deck_info.id)
+            deck = get_deck_list(deck_info.id, include_sideboard=rules.sideboard_max > 0)
             progress.remove_task(task)
             if deck:
                 os.makedirs(os.path.dirname(deck_info.file), exist_ok=True)
@@ -112,11 +116,16 @@ def update_card_library(config_file) -> None:
                     for card in deck:
                         file.write(f"{card}\n")
                 results.append(DeckFetchResult(deck_name, True, deck_info.file, deck, deck_info))
+                mainboard, sideboard = split_boards(deck)
+                deck_violations = validate_deck(parse_card_list(mainboard), parse_card_list(sideboard), rules)
+                if deck_violations:
+                    violations[deck_name] = deck_violations
             else:
                 render_failed_deck_warning(deck_name)
                 results.append(DeckFetchResult(deck_name, False, "—", [], deck_info))
 
     render_deck_sync_panel(results)
+    render_format_warnings(violations)
 
     decks = [(r.name, r.cards, r.config) for r in results if r.ok]
 

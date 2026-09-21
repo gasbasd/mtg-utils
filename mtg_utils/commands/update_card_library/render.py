@@ -236,8 +236,20 @@ def render_failed_deck_warning(deck_name: str) -> None:
 def render_deck_sync_panel(results: list[DeckFetchResult]) -> None:
     tbl = Table(box=None, show_header=True, header_style="bold")
     tbl.add_column("Deck")
+    tbl.add_column("Format")
     tbl.add_column("Status")
     tbl.add_column("File")
     for r in results:
-        tbl.add_row(r.name, "[green]✓[/green]" if r.ok else "[red]✗ failed[/red]", r.file)
+        tbl.add_row(r.name, r.config.format, "[green]✓[/green]" if r.ok else "[red]✗ failed[/red]", r.file)
     console.print(Panel(tbl, title="Deck sync", border_style="blue"))
+
+
+def render_format_warnings(violations: dict[str, list[str]]) -> None:
+    if not violations:
+        return
+    parts: list[RenderableType] = []
+    for deck_name, messages in violations.items():
+        parts.append(Text.from_markup(f"[bold]{escape(deck_name)}[/bold] breaks its format rules:"))
+        for message in messages:
+            parts.append(Text.from_markup(f"  • {escape(message)}"))
+    err_console.print(Panel(Group(*parts), title="⚠ WARNING: Format violations", border_style="yellow"))

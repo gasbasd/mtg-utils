@@ -335,6 +335,37 @@ def test_moxfield_happy_path(tmp_path, monkeypatch):
     assert "Black Lotus" in result.output
 
 
+@pytest.mark.integration
+def test_moxfield_defaults_to_mainboard_only(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_available(tmp_path, [])
+
+    with patch(
+        "mtg_utils.commands.show_shopping_list.command.get_deck_list",
+        return_value=["1 Black Lotus"],
+    ) as fetch:
+        CliRunner().invoke(show_shopping_list, ["-id", "some-id"])
+
+    fetch.assert_called_once_with("some-id", include_sideboard=False)
+
+
+@pytest.mark.integration
+def test_moxfield_with_sideboard_flag(tmp_path, monkeypatch):
+    """--sideboard fetches the sideboard and its cards land on the shopping list."""
+    monkeypatch.chdir(tmp_path)
+    _write_available(tmp_path, [])
+
+    with patch(
+        "mtg_utils.commands.show_shopping_list.command.get_deck_list",
+        return_value=["1 Black Lotus", "# Sideboard", "2 Pyroblast"],
+    ) as fetch:
+        result = CliRunner().invoke(show_shopping_list, ["-id", "some-id", "--sideboard"])
+
+    fetch.assert_called_once_with("some-id", include_sideboard=True)
+    assert result.exit_code == 0
+    assert "Pyroblast" in result.output
+
+
 # ---------------------------------------------------------------------------
 # purchased cards augmentation
 # ---------------------------------------------------------------------------

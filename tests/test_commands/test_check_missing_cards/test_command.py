@@ -177,6 +177,31 @@ def test_check_missing_via_moxfield_id(setup_repo):
     assert "Total cards in deck: 1" in result.output
 
 
+@pytest.mark.integration
+def test_check_missing_moxfield_id_defaults_to_mainboard_only(setup_repo):
+    setup_repo(available_cards=["2 Island"])
+
+    with patch("mtg_utils.commands.check_missing_cards.command.get_deck_list", return_value=["1 Island"]) as fetch:
+        CliRunner().invoke(cli, ["check-missing-cards", "--moxfield-id", "deck-id"])
+
+    fetch.assert_called_once_with("deck-id", include_sideboard=False)
+
+
+@pytest.mark.integration
+def test_check_missing_moxfield_id_with_sideboard_flag(setup_repo):
+    setup_repo(available_cards=["2 Island"])
+
+    with patch(
+        "mtg_utils.commands.check_missing_cards.command.get_deck_list",
+        return_value=["1 Island", "# Sideboard", "1 Pyroblast"],
+    ) as fetch:
+        result = CliRunner().invoke(cli, ["check-missing-cards", "--moxfield-id", "deck-id", "--sideboard"])
+
+    fetch.assert_called_once_with("deck-id", include_sideboard=True)
+    assert result.exit_code == 0
+    assert "Pyroblast" in result.output
+
+
 # --- purchased marker (*) ---
 
 

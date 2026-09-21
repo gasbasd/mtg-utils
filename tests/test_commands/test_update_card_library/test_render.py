@@ -8,6 +8,7 @@ from mtg_utils.commands.update_card_library import render as render_module
 from mtg_utils.commands.update_card_library.logic import DeckFetchResult
 from mtg_utils.commands.update_card_library.render import (
     render_deck_sync_panel,
+    render_format_warnings,
     render_failed_deck_warning,
     render_shared_deck_panels,
     render_unavailable_warnings,
@@ -453,3 +454,43 @@ class TestRenderDeckSyncPanel:
         assert "alpha" in out
         assert "beta" in out
 
+
+# ---------------------------------------------------------------------------
+# render_format_warnings
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+class TestRenderFormatWarnings:
+    def test_empty_dict_no_output(self):
+        assert _capture_err(render_format_warnings, {}) == ""
+
+    def test_panel_title_and_deck_name(self):
+        out = _capture_err(render_format_warnings, {"burn": ["58 cards in mainboard (need at least 60)"]})
+        assert "Format violations" in out
+        assert "burn" in out
+        assert "58 cards in mainboard (need at least 60)" in out
+
+    def test_multiple_decks_all_rendered(self):
+        out = _capture_err(render_format_warnings, {"burn": ["5x Lightning Bolt (max 4, counting sideboard)"], "edh": ["101 cards in mainboard (need exactly 100)"]})
+        assert "burn" in out
+        assert "5x Lightning Bolt" in out
+        assert "edh" in out
+        assert "101 cards" in out
+
+    def test_markup_in_names_is_escaped(self):
+        out = _capture_err(render_format_warnings, {"[red]deck[/red]": ["2x [bold]Card[/bold] (max 1, counting sideboard)"]})
+        assert "[red]deck[/red]" in out
+        assert "[bold]Card[/bold]" in out
+
+
+@pytest.mark.unit
+class TestRenderDeckSyncPanelFormat:
+    def test_format_column_shows_deck_format(self):
+        results = [
+            DeckFetchResult("burn", True, "card_library/decks/burn.txt", [], DeckConfig(id="p", file="f", format="pauper")),
+            DeckFetchResult("edh", True, "card_library/decks/edh.txt", [], _deck_cfg()),
+        ]
+        out = _capture_out(render_deck_sync_panel, results)
+        assert "pauper" in out
+        assert "commander" in out

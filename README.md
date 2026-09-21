@@ -90,12 +90,23 @@ create example file:
     },
     "deck2": {
       "file": "card_library/decks/deck2.txt",
-      "id": "moxfield-deck-id-2"
+      "id": "moxfield-deck-id-2",
+      "shared_decks": ["deck1"]
+    },
+    "burn": {
+      "file": "card_library/decks/burn.txt",
+      "id": "moxfield-deck-id-3",
+      "format": "pauper"
     }
   },
   "purchased_file": "card_library/purchased.txt"
 }
 ```
+
+Per-deck options:
+
+- `format` — `commander` (default: 100-card singleton, no sideboard) or `pauper` (60-card minimum, max 4 copies, 15-card sideboard). It decides whether the Moxfield sideboard is fetched and which rules `update-card-library` warns about.
+- `shared_decks` — the deck reuses copies already allocated to the listed decks instead of consuming new ones from your library.
 
 ## Usage
 
@@ -106,6 +117,8 @@ Update your card collection and decks from Moxfield:
 ```sh
 mtg-utils update-card-library
 ```
+
+Each deck is written to its `file` as `{qty} {card name}` lines. For formats with a sideboard the sideboard follows a `# Sideboard` marker line; every command treats the file as one pool of cards you need, so sideboard copies are consumed from your library too. Decks that break their format's rules (size, sideboard size, copy limit) are reported in a warning panel but still processed.
 
 #### Record purchased cards
 
@@ -123,6 +136,9 @@ Or check against a Moxfield deck:
 
 ```sh
 mtg-utils check-missing-cards --moxfield-id your-moxfield-deck-id
+
+# Include the deck's sideboard (Moxfield decks only; files already contain it)
+mtg-utils check-missing-cards --moxfield-id your-moxfield-deck-id --sideboard
 ```
 
 ### Show Shopping List
@@ -144,6 +160,7 @@ Options:
 
 - `-d / --deck-file` — path to a deck file (repeatable)
 - `-id / --moxfield-id` — Moxfield deck ID (repeatable)
+- `--sideboard` — also fetch each Moxfield deck's sideboard
 - `-o / --output-file` — write the buy list to a file in `{qty} {card name}` format (optional)
 
 > **Note:** Purchased cards (`purchased_formatted.txt`) only count toward your available pool for copies not already needed to fill a configured library deck.
