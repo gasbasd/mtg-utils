@@ -20,3 +20,8 @@ class TestParseCardList:
     def test_multiple_entries(self):
         result = parse_card_list(["3 Island", "1 Forest", "2 Mountain"])
         assert result == {"Island": 3, "Forest": 1, "Mountain": 2}
+
+    def test_repeated_entries_accumulate(self):
+        # A hand-written list may split copies of one card across several lines.
+        assert parse_card_list(["4 Lightning Bolt", "2 Lightning Bolt"]) == {"Lightning Bolt": 6}
+

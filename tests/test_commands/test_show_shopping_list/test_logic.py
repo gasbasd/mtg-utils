@@ -180,3 +180,10 @@ class TestParseCardListOrNames:
     def test_multi_word_name_with_qty(self):
         result = parse_card_list_or_names(["3 Path to Exile"])
         assert result == {"Path to Exile": 3}
+
+    def test_repeated_bare_names_accumulate(self):
+        # Four copies written as four bare lines are four cards, not one.
+        assert parse_card_list_or_names(["Lightning Bolt"] * 4) == {"Lightning Bolt": 4}
+
+    def test_bare_name_adds_to_quantity_prefixed_entry(self):
+        assert parse_card_list_or_names(["2 Lightning Bolt", "Lightning Bolt"]) == {"Lightning Bolt": 3}
