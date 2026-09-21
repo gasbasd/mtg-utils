@@ -239,6 +239,42 @@ class TestRenderSharedDeckPanels:
 
         assert ("[bold yellow1]tatyova (14 cards)[/bold yellow1]", [("Snow-Covered Island", 14)]) in panels
 
+    def test_single_shared_deck_only_in_panel_keeps_residual_quantity(self, monkeypatch):
+        # guidelight runs 15 Island, soulherder only 8 -> 8 are shared and the other 7
+        # still belong to guidelight alone, so they must show in the "Only in" panel.
+        deck_cards = {
+            "soulherder": {"Island": 8},
+            "guidelight": {"Island": 15, "Brainstorm": 1},
+        }
+        deck_configs = {
+            "guidelight": _deck_cfg(id="c1", file="child.txt", shared_decks=["soulherder"]),
+        }
+
+        panels = self._captured_shared_subpanels(monkeypatch, deck_cards, deck_configs)
+
+        assert ("[bold yellow1]soulherder (8 cards)[/bold yellow1]", [("Island", 8)]) in panels
+        assert (
+            "[bold yellow1]Only in guidelight (8 cards)[/bold yellow1]",
+            [("Brainstorm", 1), ("Island", 7)],
+        ) in panels
+
+    def test_multiple_shared_decks_single_overlap_keeps_residual_quantity(self, monkeypatch):
+        # Island is only in alpha (8 copies) while child runs 15 -> the 7 extra copies
+        # are exclusive to child and must not vanish from the "Only in" panel.
+        deck_cards = {
+            "alpha": {"Island": 8},
+            "beta": {"Forest": 1},
+            "child": {"Island": 15},
+        }
+        deck_configs = {
+            "child": _deck_cfg(id="c1", file="child.txt", shared_decks=["alpha", "beta"]),
+        }
+
+        panels = self._captured_shared_subpanels(monkeypatch, deck_cards, deck_configs)
+
+        assert ("[bold yellow1]alpha (8 cards)[/bold yellow1]", [("Island", 8)]) in panels
+        assert ("[bold yellow1]Only in child (7 cards)[/bold yellow1]", [("Island", 7)]) in panels
+
     def test_per_shared_deck_exclusive_panel_uses_min_overlap(self, monkeypatch):
         deck_cards = {
             "tatyova": {"Snow-Covered Island": 14},
@@ -416,3 +452,4 @@ class TestRenderDeckSyncPanel:
         out = _capture_out(render_deck_sync_panel, results)
         assert "alpha" in out
         assert "beta" in out
+

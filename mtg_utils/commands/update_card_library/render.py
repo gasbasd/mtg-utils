@@ -84,6 +84,11 @@ def render_shared_deck_panels(
                         shared_panel_quantities[shared_deck_name][card_name] = (
                             shared_panel_quantities[shared_deck_name].get(card_name, 0) + overlap_qty
                         )
+                    only_in_current_residual = current_qty - overlap_qty
+                    if only_in_current_residual > 0:
+                        only_in_deck_quantities[card_name] = (
+                            only_in_deck_quantities.get(card_name, 0) + only_in_current_residual
+                        )
                     continue
 
                 common_qty = min(overlap_qty for _, overlap_qty in overlaps)
@@ -183,13 +188,18 @@ def render_shared_deck_panels(
                     )
                 )
 
-            only_in_deck_cards = sorted(c for c in current_deck_cards if c not in shared_cards_info)
+            only_in_deck_quantities = {
+                card_name: residual
+                for card_name, current_qty in current_deck_cards.items()
+                if (residual := current_qty - shared_cards_info.get(card_name, 0)) > 0
+            }
+            only_in_deck_cards = sorted(only_in_deck_quantities)
             if only_in_deck_cards:
-                only_in_deck_total = sum(current_deck_cards[c] for c in only_in_deck_cards)
+                only_in_deck_total = sum(only_in_deck_quantities.values())
                 sub_panel_specs.append(
                     (
                         f"[bold yellow1]Only in {escape(deck_name)} ({only_in_deck_total} cards)[/bold yellow1]",
-                        card_table([(name, current_deck_cards[name]) for name in only_in_deck_cards]),
+                        card_table([(name, only_in_deck_quantities[name]) for name in only_in_deck_cards]),
                     )
                 )
             else:
