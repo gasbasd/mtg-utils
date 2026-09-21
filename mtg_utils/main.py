@@ -5,6 +5,7 @@ from rich.rule import Rule
 
 from mtg_utils.commands.check_missing_cards import check_missing_cards
 from mtg_utils.commands.compare_decks import compare_decks
+from mtg_utils.commands.convert_cardtrader_order import convert_cardtrader_order
 from mtg_utils.commands.list_decks import list_decks
 from mtg_utils.commands.show_shopping_list import show_shopping_list
 from mtg_utils.commands.update_card_library import update_card_library
@@ -29,6 +30,7 @@ def cli(debug: bool = False):
 
 cli.add_command(compare_decks)
 cli.add_command(check_missing_cards)
+cli.add_command(convert_cardtrader_order)
 cli.add_command(list_decks)
 cli.add_command(show_shopping_list)
 cli.add_command(update_card_library)
