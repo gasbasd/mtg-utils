@@ -10,19 +10,16 @@
 1 Bojuka Bog
 1 Brainspoil
 1 Brokers Hideout
-1 Cabal Ritual
 1 Carrion Feeder
 1 Command Tower
-1 Commune with Beavers
 1 Commune with the Gods
 1 Crypt Rats
-1 Dark Ritual
 1 Darkmoss Bridge
 1 Deadly Dispute
+1 Deathgreeter
 1 Devoted Druid
 1 Devouring Swarm
 1 Dimir House Guard
-1 Disciple of the Vault
 1 Dread Return
 1 Drix Fatemaker
 1 Duskshell Crawler
@@ -36,21 +33,23 @@
 1 Falkenrath Noble
 1 Fanatical Offering
 1 Fetid Gargantua
-1 Go for the Throat
 1 Golgari Rot Farm
 1 Gray Merchant of Asphodel
+1 Greedy Freebooter
+1 Grisly Salvage
 1 Haunted Mire
-1 Implement of Ferocity
-1 Lotus Petal
+1 Iron Apprentice
+1 Ivy Lane Denizen
+1 Lampad of Death's Vigil
 1 Malevolent Rumble
 1 Master Chef
 1 Mortuary Mire
-1 Myr Scrapling
 1 Nantuko Husk
 1 Night's Whisper
 1 Obscura Storefront
 1 Origin of Metalbending
-1 Pactdoll Terror
+1 Oubliette
+1 Pestilence
 1 Phyrexian Ghoul
 1 Pridemalkin
 1 Putrid Goblin
@@ -62,6 +61,7 @@
 1 Rite of Consumption
 1 Riveteers Overlook
 1 Sadistic Glee
+1 Shambling Ghast
 1 Shred Memory
 1 Snakeskin Veil
 1 Snuff Out

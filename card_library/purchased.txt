@@ -1,177 +1,23 @@
-Iron Man, Master of Machines
-Frogmite
-Myr Enforcer
-Utrom Monitor
-Sojourner's Companion
-Cryogen Relic
-Brass Knuckles
-Silverbluff Bridge
-Welding Jar
-Illvoi Light Jammer
-Golem-Skin Gauntlets
-Call Damage Control
-Futurist Forge
-Go Nuts!
-S.H.I.E.L.D. Spy Kit
-Project Deathlok Soldier
-Smashing Spree
-Basilica Screecher
-Ceremonial Knife
-Reverse Engineer
-Prying Blade
-Sticky Fingers
-Foundry Inspector
-Melded Moxite
-Snow-Covered Mountain
-Snow-Covered Mountain
-Snow-Covered Mountain
-Snow-Covered Mountain
-Snow-Covered Mountain
-Snow-Covered Mountain
-Snow-Covered Mountain
-Snow-Covered Mountain
-Snow-Covered Mountain
-Snow-Covered Mountain
-Etherium Sculptor
-Psychotic Fury
-Wrenn's Resolve
-Skred
-Oaken Siren
-Disruption Protocol
-Crashing Drawbridge
-Fiery Cannonade
-Beamtown Beatstick
-Metallic Rebuke
-Clout of the Dominus
-Galvanic Blast
-Breath Weapon
-Stoic Rebuttal
-Experimental Synthesizer
-Counterspell
-Lightning Bolt
-Machinesmith Automaton
-Silverbluff Bridge
-Volatile Fjord
-Great Furnace
+ Lampad of Death's Vigil
+Grisly Salvage
+Iron Apprentice
+Ivy Lane Denizen
+Tamiyo's Safekeeping
+Prismatic Lens
+An Offer You Can't Refuse
+Dispatch
+Interface Ace
+Page, Loose Leaf
+Essence Flux
+Frantic Search
+Memory Lapse
+Benevolent Blessing
 Ornithopter of Paradise
-Zookeeper Mechan
-Molten Tributary
-Boreal Druid
-Treasure
-Izzet Boilerworks
-Airbending Lesson
-Antler Skulkin
-Arcbound Prototype
-Automated Artificer
-Battered Golem
-Energy Tap
-Fleetfeather Sandals
-Fractured Powerstone
-Guardian Idol
-Guidelight Optimizer
-Guidelight Pathmaker
-Hydraulic Helper
-Mental Journey
-Mirrorshell Crab
-Renowned Weaponsmith
-Sewer-veillance Cam
-Spaceshift
-Spell Rupture
-Stern Lesson
-Vedalken Engineer
-Voyager Quickwelder
-Guidelight Pathmaker
-Vedalken Engineer
-Hot Dog Cart
-Wizard's Rockets
-Master Chef
-Long Feng, Grand Secretariat
-Commune with Beavers
-Drix Fatemaker
-Nantuko Husk
-Phyrexian Ghoul
-Tuskguard Captain
-Pridemalkin
-Duskshell Crawler
-Evolution Charm
-Riveteers Overlook
-Rattleblaze Scarecrow
-Rendclaw Trow
-Bloodthrone Vampire
-Aerie Ouphes
-Wingrattle Scarecrow
-Putrid Goblin
-Disciple of the Vault
-Essence Harvest
-Nature's Claim
-Winding Way
-Rite of Consumption
-Devoted Druid
-Myr Scrapling
-Devouring Swarm
-Bloodflow Connoisseur
-Basilica Screecher
-Ram Through
-Terramorphic Expanse
-Vibrant Cityscape
-Vines of Vastwood
-Brokers Hideout
-Snakeskin Veil
-Alexi's Cloak
-Aether Spellbomb
-Arcum's Astrolabe
-Command Tower
-Confound
-Goggles of Night
-Instant Ramen
-Vanishing
-Snow-Covered Island
-Snow-Covered Island
-Snow-Covered Island
-Snow-Covered Island
-Snow-Covered Island
-Snow-Covered Island
-Snow-Covered Island
-Snow-Covered Island
-Snow-Covered Island
-Snow-Covered Island
-Snow-Covered Island
-Deadly Dispute
-Eviscerator's Insight
-Spirit Link
-Ward of Lights
-All That Glitters
-Heliod's Pilgrim
-Eagles of the North
-Night's Whisper
-Suffocating Fumes
-Trespasser's Curse
-Utter Insignificance
-Obscura Storefront
-Command Tower
-Brainspoil
-Radiant Fountain
-Mana Leak
-Sapphire Charm
-Adventurer's Inn
-Geyser Drake
-Naiad of Hidden Coves
-Potioner's Trove
-H.E.R.B.I.E. Scout Unit
-A.I.M. Labs
-Sinister Hideout
-Soul Manipulation
-Goblin-town Flunkies
-Hobbit Hole
-Attercop
-Beorn, Reluctant Host // Till and Tend
-Front Porch Sentries
-Stony-Voiced Goblins
-Confusticate and Bebother
-Giant's Boulder
-Well-Worn Spatula
-Warg Tactics
-Goblin Army // Human Soldier
-Sanar, Unfinished Genius // Wild Idea
-Sanar, Unfinished Genius // Wild Idea
-Renowned Weaponsmith
+Rewind
+Tithing Blade // Consuming Sepulcher
+Benevolent Bodyguard
+Ancient Den
+Cho-Manno's Blessing
+Black Mage's Rod
+Fellwar Stone
+Gray Merchant of Asphodel
