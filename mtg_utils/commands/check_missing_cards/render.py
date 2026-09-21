@@ -15,8 +15,18 @@ def render_results(
     purchased_names: set[str],
     owned_dict: dict[str, int],
     total: int,
+    sideboard_total: int = 0,
+    board_tags: dict[str, str] | None = None,
 ) -> None:
-    console.print(Rule(f"[bold]Total cards in deck: {total}[/bold]"))
+    tags = board_tags or {}
+
+    def label(name: str) -> str:
+        return escape(name) + (f" [dim]({tags[name]})[/dim]" if name in tags else "")
+
+    header = f"Total cards in deck: {total}"
+    if sideboard_total:
+        header += f" + {sideboard_total} sideboard"
+    console.print(Rule(f"[bold]{header}[/bold]"))
 
     total_available_qty = sum(int(card.split(" ", 1)[0]) for card in available_in_deck)
     if available_in_deck:
@@ -27,7 +37,7 @@ def render_results(
         for entry in sorted(available_in_deck):
             qty, name = entry.split(" ", 1)
             marker = "[bold]*[/bold]" if name in purchased_names and owned_dict.get(name, 0) < int(qty) else ""
-            tbl.add_row(marker, qty, escape(name))
+            tbl.add_row(marker, qty, label(name))
         avail_panel = Panel(
             tbl,
             title=f"Available: {total_available_qty} ({len(available_in_deck)} unique)",
@@ -42,7 +52,7 @@ def render_results(
         tbl.add_column("qty", justify="right", style="dim")
         tbl.add_column("name", style="red")
         for card_name, missing_qty in sorted(completely_missing_cards, key=lambda x: x[0]):
-            tbl.add_row(str(missing_qty), escape(card_name))
+            tbl.add_row(str(missing_qty), label(card_name))
         missing_panel = Panel(
             tbl,
             title=f"Missing: {total_completely_missing} ({len(completely_missing_cards)} unique)",
@@ -63,7 +73,7 @@ def render_results(
         tbl.add_column("name")
         tbl.add_column("decks", style="dim")
         for card_name, qty, deck_info in sorted(partially_missing_cards, key=lambda x: x[0]):
-            tbl.add_row(str(qty), escape(card_name), escape(f"[{deck_info}]"))
+            tbl.add_row(str(qty), label(card_name), escape(f"[{deck_info}]"))
         console.print(
             Panel(
                 tbl,
@@ -85,7 +95,7 @@ def render_results(
                 for card_name, total_qty, usable_qty in sorted(cards, key=lambda x: x[0]):
                     if usable_qty > 0:
                         marker = "[bold]*[/bold]" if card_name in purchased_names else ""
-                        tbl.add_row(marker, str(usable_qty), escape(card_name))
+                        tbl.add_row(marker, str(usable_qty), label(card_name))
                 row_panels.append(
                     Panel(
                         tbl,

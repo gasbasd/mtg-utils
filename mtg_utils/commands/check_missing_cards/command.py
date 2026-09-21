@@ -3,9 +3,9 @@ from collections import defaultdict
 import click
 from rich.markup import escape
 
-from mtg_utils.commands.check_missing_cards.logic import compute_missing_cards
+from mtg_utils.commands.check_missing_cards.logic import board_tags, compute_missing_cards
 from mtg_utils.commands.check_missing_cards.render import render_results
-from mtg_utils.utils.cards import parse_card_list
+from mtg_utils.utils.cards import parse_card_list, split_boards
 from mtg_utils.utils.config import DEFAULT_CONFIG_FILE, load_config
 from mtg_utils.utils.console import err_console
 from mtg_utils.utils.moxfield_api import get_deck_list
@@ -55,8 +55,11 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, sideboar
     for card_name, qty in purchased_quantities.items():
         available_dict[card_name] = available_dict.get(card_name, 0) + qty
 
+    mainboard, sideboard_lines = split_boards(deck)
+    main_dict = parse_card_list(mainboard)
+    side_dict = parse_card_list(sideboard_lines)
     deck_dict = parse_card_list(deck)
-    total = sum(deck_dict.values())
+    total = sum(main_dict.values())
 
     completely_missing_cards, partially_missing_cards, available_in_deck, cards_by_deck = compute_missing_cards(
         deck_dict, available_dict, owned_dict, dict(cards_in_decks)
@@ -70,4 +73,6 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, sideboar
         purchased_names,
         owned_dict,
         total,
+        sideboard_total=sum(side_dict.values()),
+        board_tags=board_tags(main_dict, side_dict),
     )

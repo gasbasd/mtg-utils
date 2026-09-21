@@ -1,6 +1,6 @@
 import pytest
 
-from mtg_utils.commands.check_missing_cards.logic import compute_missing_cards
+from mtg_utils.commands.check_missing_cards.logic import board_tags, compute_missing_cards
 
 
 @pytest.mark.unit
@@ -98,3 +98,18 @@ class TestComputeMissingCards:
         assert partially_missing == []
         assert available_in_deck == []
         assert cards_by_deck == {}
+
+
+@pytest.mark.unit
+class TestBoardTags:
+    def test_mainboard_only_cards_get_no_tag(self):
+        assert board_tags({"Island": 4}, {}) == {}
+
+    def test_sideboard_only_card_is_tagged_side(self):
+        assert board_tags({"Island": 4}, {"Pyroblast": 3}) == {"Pyroblast": "side"}
+
+    def test_card_in_both_boards_is_tagged_main_and_side(self):
+        assert board_tags({"Lightning Bolt": 4}, {"Lightning Bolt": 1, "Pyroblast": 3}) == {
+            "Lightning Bolt": "main+side",
+            "Pyroblast": "side",
+        }
