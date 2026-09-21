@@ -97,7 +97,10 @@ def _compute_card_usage(
             already_used = used_cards.get(card_name, 0)
             available_quantity = total_in_library - already_used
 
-            if available_quantity < quantity_to_consume:
+            # A deck whose need is fully covered by its shared decks takes nothing from the
+            # pool, so it is never missing — not even when other decks have already
+            # over-subscribed the pool and left available_quantity negative.
+            if quantity_to_consume > 0 and available_quantity < quantity_to_consume:
                 msg = f"{quantity} {card_name} (have {total_in_library}"
                 if shared_details:
                     msg += f", sharing: {', '.join(shared_details)}"

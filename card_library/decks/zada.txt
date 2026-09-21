@@ -30,6 +30,7 @@
 1 Goblin Chirurgeon
 1 Goblin Instigator
 1 Goblin Matron
+1 Goblin-town Flunkies
 1 Great Furnace
 1 Haste Magic
 1 Hordeling Outburst
@@ -48,7 +49,6 @@
 1 Ornithopter of Paradise
 1 Otherworldly Outburst
 1 Pyretic Ritual
-1 Ral's Reinforcements
 1 Rally at the Hornburg
 1 Reckless Charge
 1 Reckless Ransacking

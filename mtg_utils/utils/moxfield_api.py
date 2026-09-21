@@ -1,41 +1,50 @@
 import cloudscraper
 
+from mtg_utils.utils.cards import SIDEBOARD_MARKER
+from mtg_utils.utils.formats import BASIC_LANDS
+
 scraper = cloudscraper.create_scraper()
+
+SNOW_LANDS = frozenset(name for name in BASIC_LANDS if name.startswith("Snow-Covered "))
+
 
 def library_sort_key(card_entry):
     # Extract the card name (everything after the first space)
     card_name = card_entry.split(' ', 1)[1]
-    
-    # Check if it's one of the snow-covered lands to put at the end
-    snow_lands = [
-        "Snow-Covered Forest",
-        "Snow-Covered Island",
-        "Snow-Covered Mountain",
-        "Snow-Covered Plains",
-        "Snow-Covered Swamp",
-    ]
-    if card_name in snow_lands:
-        return (1, card_name)  # Group 1 (at end) and then alphabetically
+
+    # Snow-covered lands go at the end, then alphabetically within each group
+    if card_name in SNOW_LANDS:
+        return (1, card_name)
     else:
-        return (0, card_name) 
+        return (0, card_name)
 
 
-def get_deck_list(deck_id: str) -> list[str]:
-    """Fetch a deck list from Moxfield by its ID."""
+def _board_lines(boards: dict, board: str) -> list[str]:
+    cards = boards.get(board, {}).get("cards", {}).values()
+    return sorted(f"{card['quantity']} {card['card']['name']}" for card in cards)
+
+
+def get_deck_list(deck_id: str, include_sideboard: bool = False) -> list[str]:
+    """Fetch a deck list from Moxfield by its ID.
+
+    Commanders come first, then the mainboard. With ``include_sideboard`` a non-empty
+    sideboard is appended after a ``SIDEBOARD_MARKER`` line.
+    """
     response = scraper.get(f"https://api2.moxfield.com/v3/decks/all/{deck_id}")
     response.raise_for_status()  # Raise an error for bad responses
 
-    deck_list = []
-    data = response.json()
-    for card in data["boards"]["mainboard"]["cards"].values():
-        quantity = card["quantity"]
-        name = card["card"]["name"]
-        deck_list.append(f"{quantity} {name}")
-    deck_list.sort()
-    commanders = data["boards"]['commanders']['cards'].values()
+    boards = response.json()["boards"]
+    deck_list = _board_lines(boards, "mainboard")
+    commanders = boards.get("commanders", {}).get("cards", {}).values()
     for i, commander in enumerate(commanders):
         name = commander["card"]["name"]
         deck_list.insert(i, f"1 {name}")
+
+    if include_sideboard:
+        sideboard = _board_lines(boards, "sideboard")
+        if sideboard:
+            deck_list.append(SIDEBOARD_MARKER)
+            deck_list.extend(sideboard)
 
     return deck_list
 

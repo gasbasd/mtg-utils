@@ -1,0 +1,81 @@
+1 Guidelight Pathmaker
+1 Airbending Lesson
+1 Ancient Den
+1 Antler Skulkin
+1 Arcane Denial
+1 Arcane Signet
+1 Arcbound Prototype
+1 Ashnod's Altar
+1 Automated Artificer
+1 Azorius Chancery
+1 Azorius Signet
+1 Battered Golem
+1 Bender's Waterskin
+1 Command Tower
+1 Counterspell
+1 Crashing Drawbridge
+1 Cryogen Relic
+1 Darksteel Citadel
+1 Deprive
+1 Dispel
+1 Dispersal Shield
+1 Disruption Protocol
+1 Energy Refractor
+1 Energy Tap
+1 Ephemerate
+1 Essence Flux
+1 Etherium Sculptor
+1 Fellwar Stone
+1 Fleetfeather Sandals
+1 Flicker of Fate
+1 Foundry Inspector
+1 Fractured Powerstone
+1 Frantic Search
+1 Ghostly Flicker
+1 Glacial Floodplain
+1 Gold Myr
+1 Guardian Idol
+1 Guidelight Optimizer
+1 Halimar Depths
+1 Hydraulic Helper
+1 Idyllic Beachfront
+1 Interface Ace
+1 Lembas
+1 Lórien Revealed
+1 Marble Diamond
+1 Memory Lapse
+1 Mental Journey
+1 Mind Stone
+1 Mirrorshell Crab
+1 Muddle the Mixture
+1 Myr Retriever
+1 Mystic Sanctuary
+1 Negate
+1 Oaken Siren
+1 Ornithopter of Paradise
+1 Otherworldly Journey
+1 Page, Loose Leaf
+1 Planar Incision
+1 Prismatic Lens
+1 Razortide Bridge
+1 Renowned Weaponsmith
+1 Righteous Aura
+1 Scrollshift
+1 Seat of the Synod
+1 Secret Door
+1 Sewer-veillance Cam
+1 Silver Myr
+1 Sky Diamond
+1 Spaceshift
+1 Spell Rupture
+1 Star Compass
+1 Stern Lesson
+1 Stoic Rebuttal
+1 Teferi's Time Twist
+1 Thought Vessel
+1 Turn to Mist
+1 Vedalken Engineer
+1 Voyager Quickwelder
+1 Workshop Assistant
+13 Island
+8 Plains

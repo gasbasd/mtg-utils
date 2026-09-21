@@ -28,6 +28,7 @@
 1 Fountainport Bell
 1 Futurist Forge
 1 Galvanic Blast
+1 Giant's Boulder
 1 Goggles of Night
 1 Goldvein Pick
 1 Golem Foundry
@@ -49,7 +50,6 @@
 1 Mystic Sanctuary
 1 Network Terminal
 1 Neurok Stealthsuit
-1 Oaken Siren
 1 Opal Palace
 1 Ornithopter of Paradise
 1 Ponder
@@ -58,13 +58,13 @@
 1 Psychotic Fury
 1 Raking Claws
 1 Relic of Progenitus
+1 Renowned Weaponsmith
 1 Reverse Engineer
 1 Seat of the Synod
 1 Secrets of the Golden City
 1 Silverbluff Bridge
 1 Skred
 1 Sojourner's Companion
-1 Springleaf Drum
 1 Sticky Fingers
 1 Stoic Rebuttal
 1 Temur Battle Rage
@@ -72,6 +72,7 @@
 1 Trinket Mage
 1 Utrom Monitor
 1 Vanishing
+1 Vedalken Engineer
 1 Volatile Fjord
 1 Wedding Invitation
 1 Welding Jar
@@ -79,4 +80,4 @@
 1 Whoosh!
 1 Zookeeper Mechan
 12 Snow-Covered Island
-8 Snow-Covered Mountain
+7 Snow-Covered Mountain

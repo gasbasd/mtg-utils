@@ -25,8 +25,8 @@ def test_render_decks_with_cards_multiple_decks(capsys):
     # Mock load_deck_cards to return known cards
     with patch("mtg_utils.commands.list_decks.render.load_deck_cards") as mock_load:
         mock_load.side_effect = [
-            {"Forest": 4, "Island": 4},  # deck1 cards
-            {"Mountain": 4, "Plains": 4},  # deck2 cards
+            ({"Forest": 4, "Island": 4}, {}),  # deck1 cards
+            ({"Mountain": 4, "Plains": 4}, {}),  # deck2 cards
         ]
 
         render_decks_with_cards(decks)
@@ -51,7 +51,7 @@ def test_render_decks_with_cards_single_deck(capsys):
     ]
 
     with patch("mtg_utils.commands.list_decks.render.load_deck_cards") as mock_load:
-        mock_load.return_value = {"Forest": 4, "Island": 4}
+        mock_load.return_value = ({"Forest": 4, "Island": 4}, {})
 
         render_decks_with_cards(decks)
 
@@ -88,3 +88,27 @@ def test_render_decks_with_cards_no_decks(capsys):
     output = captured.out
 
     assert "No decks configured" in output
+
+
+def test_render_decks_with_cards_shows_sideboard_section(capsys):
+    """A deck with a sideboard shows both counts in the header and a Sideboard section."""
+    with patch("mtg_utils.commands.list_decks.render.load_deck_cards") as mock_load:
+        mock_load.return_value = ({"Lightning Bolt": 4, "Mountain": 56}, {"Pyroblast": 3})
+
+        render_decks_with_cards([("burn", "card_library/decks/burn.txt")])
+
+    output = capsys.readouterr().out
+
+    assert "burn (60 cards + 3 sideboard)" in output
+    assert "Sideboard" in output
+    assert output.index("Lightning Bolt") < output.index("Sideboard") < output.index("Pyroblast")
+
+
+def test_render_decks_with_cards_empty_deck(capsys):
+    """A deck with no cards in either board is reported as empty."""
+    with patch("mtg_utils.commands.list_decks.render.load_deck_cards") as mock_load:
+        mock_load.return_value = ({}, {})
+
+        render_decks_with_cards([("void", "card_library/decks/void.txt")])
+
+    assert "void (empty deck)" in capsys.readouterr().out

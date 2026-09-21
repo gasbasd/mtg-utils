@@ -84,6 +84,11 @@ def render_shared_deck_panels(
                         shared_panel_quantities[shared_deck_name][card_name] = (
                             shared_panel_quantities[shared_deck_name].get(card_name, 0) + overlap_qty
                         )
+                    only_in_current_residual = current_qty - overlap_qty
+                    if only_in_current_residual > 0:
+                        only_in_deck_quantities[card_name] = (
+                            only_in_deck_quantities.get(card_name, 0) + only_in_current_residual
+                        )
                     continue
 
                 common_qty = min(overlap_qty for _, overlap_qty in overlaps)
@@ -183,13 +188,18 @@ def render_shared_deck_panels(
                     )
                 )
 
-            only_in_deck_cards = sorted(c for c in current_deck_cards if c not in shared_cards_info)
+            only_in_deck_quantities = {
+                card_name: residual
+                for card_name, current_qty in current_deck_cards.items()
+                if (residual := current_qty - shared_cards_info.get(card_name, 0)) > 0
+            }
+            only_in_deck_cards = sorted(only_in_deck_quantities)
             if only_in_deck_cards:
-                only_in_deck_total = sum(current_deck_cards[c] for c in only_in_deck_cards)
+                only_in_deck_total = sum(only_in_deck_quantities.values())
                 sub_panel_specs.append(
                     (
                         f"[bold yellow1]Only in {escape(deck_name)} ({only_in_deck_total} cards)[/bold yellow1]",
-                        card_table([(name, current_deck_cards[name]) for name in only_in_deck_cards]),
+                        card_table([(name, only_in_deck_quantities[name]) for name in only_in_deck_cards]),
                     )
                 )
             else:
@@ -226,8 +236,20 @@ def render_failed_deck_warning(deck_name: str) -> None:
 def render_deck_sync_panel(results: list[DeckFetchResult]) -> None:
     tbl = Table(box=None, show_header=True, header_style="bold")
     tbl.add_column("Deck")
+    tbl.add_column("Format")
     tbl.add_column("Status")
     tbl.add_column("File")
     for r in results:
-        tbl.add_row(r.name, "[green]✓[/green]" if r.ok else "[red]✗ failed[/red]", r.file)
+        tbl.add_row(r.name, r.config.format, "[green]✓[/green]" if r.ok else "[red]✗ failed[/red]", r.file)
     console.print(Panel(tbl, title="Deck sync", border_style="blue"))
+
+
+def render_format_warnings(violations: dict[str, list[str]]) -> None:
+    if not violations:
+        return
+    parts: list[RenderableType] = []
+    for deck_name, messages in violations.items():
+        parts.append(Text.from_markup(f"[bold]{escape(deck_name)}[/bold] breaks its format rules:"))
+        for message in messages:
+            parts.append(Text.from_markup(f"  • {escape(message)}"))
+    err_console.print(Panel(Group(*parts), title="⚠ WARNING: Format violations", border_style="yellow"))

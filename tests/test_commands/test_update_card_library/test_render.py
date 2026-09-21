@@ -8,6 +8,7 @@ from mtg_utils.commands.update_card_library import render as render_module
 from mtg_utils.commands.update_card_library.logic import DeckFetchResult
 from mtg_utils.commands.update_card_library.render import (
     render_deck_sync_panel,
+    render_format_warnings,
     render_failed_deck_warning,
     render_shared_deck_panels,
     render_unavailable_warnings,
@@ -239,6 +240,42 @@ class TestRenderSharedDeckPanels:
 
         assert ("[bold yellow1]tatyova (14 cards)[/bold yellow1]", [("Snow-Covered Island", 14)]) in panels
 
+    def test_single_shared_deck_only_in_panel_keeps_residual_quantity(self, monkeypatch):
+        # guidelight runs 15 Island, soulherder only 8 -> 8 are shared and the other 7
+        # still belong to guidelight alone, so they must show in the "Only in" panel.
+        deck_cards = {
+            "soulherder": {"Island": 8},
+            "guidelight": {"Island": 15, "Brainstorm": 1},
+        }
+        deck_configs = {
+            "guidelight": _deck_cfg(id="c1", file="child.txt", shared_decks=["soulherder"]),
+        }
+
+        panels = self._captured_shared_subpanels(monkeypatch, deck_cards, deck_configs)
+
+        assert ("[bold yellow1]soulherder (8 cards)[/bold yellow1]", [("Island", 8)]) in panels
+        assert (
+            "[bold yellow1]Only in guidelight (8 cards)[/bold yellow1]",
+            [("Brainstorm", 1), ("Island", 7)],
+        ) in panels
+
+    def test_multiple_shared_decks_single_overlap_keeps_residual_quantity(self, monkeypatch):
+        # Island is only in alpha (8 copies) while child runs 15 -> the 7 extra copies
+        # are exclusive to child and must not vanish from the "Only in" panel.
+        deck_cards = {
+            "alpha": {"Island": 8},
+            "beta": {"Forest": 1},
+            "child": {"Island": 15},
+        }
+        deck_configs = {
+            "child": _deck_cfg(id="c1", file="child.txt", shared_decks=["alpha", "beta"]),
+        }
+
+        panels = self._captured_shared_subpanels(monkeypatch, deck_cards, deck_configs)
+
+        assert ("[bold yellow1]alpha (8 cards)[/bold yellow1]", [("Island", 8)]) in panels
+        assert ("[bold yellow1]Only in child (7 cards)[/bold yellow1]", [("Island", 7)]) in panels
+
     def test_per_shared_deck_exclusive_panel_uses_min_overlap(self, monkeypatch):
         deck_cards = {
             "tatyova": {"Snow-Covered Island": 14},
@@ -416,3 +453,44 @@ class TestRenderDeckSyncPanel:
         out = _capture_out(render_deck_sync_panel, results)
         assert "alpha" in out
         assert "beta" in out
+
+
+# ---------------------------------------------------------------------------
+# render_format_warnings
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+class TestRenderFormatWarnings:
+    def test_empty_dict_no_output(self):
+        assert _capture_err(render_format_warnings, {}) == ""
+
+    def test_panel_title_and_deck_name(self):
+        out = _capture_err(render_format_warnings, {"burn": ["58 cards in mainboard (need at least 60)"]})
+        assert "Format violations" in out
+        assert "burn" in out
+        assert "58 cards in mainboard (need at least 60)" in out
+
+    def test_multiple_decks_all_rendered(self):
+        out = _capture_err(render_format_warnings, {"burn": ["5x Lightning Bolt (max 4, counting sideboard)"], "edh": ["101 cards in mainboard (need exactly 100)"]})
+        assert "burn" in out
+        assert "5x Lightning Bolt" in out
+        assert "edh" in out
+        assert "101 cards" in out
+
+    def test_markup_in_names_is_escaped(self):
+        out = _capture_err(render_format_warnings, {"[red]deck[/red]": ["2x [bold]Card[/bold] (max 1, counting sideboard)"]})
+        assert "[red]deck[/red]" in out
+        assert "[bold]Card[/bold]" in out
+
+
+@pytest.mark.unit
+class TestRenderDeckSyncPanelFormat:
+    def test_format_column_shows_deck_format(self):
+        results = [
+            DeckFetchResult("burn", True, "card_library/decks/burn.txt", [], DeckConfig(id="p", file="f", format="pauper")),
+            DeckFetchResult("edh", True, "card_library/decks/edh.txt", [], _deck_cfg()),
+        ]
+        out = _capture_out(render_deck_sync_panel, results)
+        assert "pauper" in out
+        assert "commander" in out

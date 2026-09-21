@@ -16,11 +16,13 @@ from mtg_utils.utils.readers import read_list
 @click.command()
 @click.option("--deck-file", "-d", multiple=True, help="Path to a deck file (repeatable)")
 @click.option("--moxfield-id", "-id", multiple=True, help="Moxfield deck ID (repeatable)")
+@click.option("--sideboard", is_flag=True, help="Also fetch each Moxfield deck's sideboard")
 @click.option("--output-file", "-o", default=None, help="Write shopping list to this file")
 @click.option("--config-file", default=DEFAULT_CONFIG_FILE, help="Path to config file")
 def show_shopping_list(
     deck_file: tuple[str, ...],
     moxfield_id: tuple[str, ...],
+    sideboard: bool,
     output_file: str | None,
     config_file: str,
 ) -> None:
@@ -88,7 +90,7 @@ def show_shopping_list(
         sources.append((label, parse_card_list_or_names(read_list(path))))
 
     for mid in moxfield_id:
-        deck = get_deck_list(mid)
+        deck = get_deck_list(mid, include_sideboard=sideboard)
         if not deck:
             err_console.print(f"[yellow]Warning: Could not retrieve Moxfield deck {escape(mid)}, skipping.[/yellow]")
             continue

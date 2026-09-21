@@ -1,5 +1,11 @@
+import os
+from unittest.mock import MagicMock, patch
+
 import pytest
-from mtg_utils.utils.readers import read_list
+
+from mtg_utils.utils.readers import read_list, read_xls_rows
+
+FIXTURE = os.path.join(os.path.dirname(__file__), "fixtures", "cardtrader_sample.xls")
 
 
 @pytest.mark.unit
@@ -34,3 +40,30 @@ def test_read_list_empty_file(tmp_path):
 def test_read_list_file_not_found():
     with pytest.raises(FileNotFoundError):
         read_list("/nonexistent/path/cards.txt")
+
+
+@pytest.mark.unit
+def test_read_xls_rows_keys_cells_by_header():
+    rows = read_xls_rows(FIXTURE)
+
+    assert len(rows) == 4
+    assert rows[0]["Item Name"] == "Goblin Army // Human Soldier"
+    assert rows[0]["Price in EUR Cents"] == 14.0
+    assert rows[1]["Collector Number"] == "035"
+    assert rows[3]["Game"] == "Pokemon"
+
+
+@pytest.mark.unit
+def test_read_xls_rows_empty_sheet():
+    sheet = MagicMock(nrows=0)
+    workbook = MagicMock()
+    workbook.sheet_by_index.return_value = sheet
+
+    with patch("mtg_utils.utils.readers.xlrd.open_workbook", return_value=workbook):
+        assert read_xls_rows("whatever.xls") == []
+
+
+@pytest.mark.unit
+def test_read_xls_rows_file_not_found():
+    with pytest.raises(FileNotFoundError):
+        read_xls_rows("/nonexistent/path/order.xls")

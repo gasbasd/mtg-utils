@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from mtg_utils.utils.moxfield_api import get_deck_list, get_library, library_sort_key
+from mtg_utils.utils.cards import SIDEBOARD_MARKER
 
 # --- library_sort_key ---
 
@@ -44,15 +45,19 @@ def test_library_sort_key_snow_sorts_after_normal():
 # --- get_deck_list ---
 
 
-def _deck_response(mainboard_cards, commanders=None):
+def _deck_response(mainboard_cards, commanders=None, sideboard=None):
     mock = MagicMock()
     mock.json.return_value = {
         "boards": {
             "mainboard": {"cards": mainboard_cards},
             "commanders": {"cards": commanders or {}},
+            "sideboard": {"cards": sideboard or {}},
         }
     }
     return mock
+
+
+_SIDEBOARD = {"s": {"quantity": 3, "card": {"name": "Pyroblast"}}}
 
 
 @pytest.mark.unit
@@ -78,6 +83,47 @@ def test_get_deck_list_commander_inserted_first():
     with patch("mtg_utils.utils.moxfield_api.scraper.get", return_value=response):
         result = get_deck_list("fake-id")
     assert result[0] == "1 Atraxa, Praetors' Voice"
+
+
+@pytest.mark.unit
+def test_get_deck_list_ignores_sideboard_by_default():
+    response = _deck_response(
+        mainboard_cards={"a": {"quantity": 4, "card": {"name": "Lightning Bolt"}}},
+        sideboard=_SIDEBOARD,
+    )
+    with patch("mtg_utils.utils.moxfield_api.scraper.get", return_value=response):
+        result = get_deck_list("fake-id")
+    assert result == ["4 Lightning Bolt"]
+
+
+@pytest.mark.unit
+def test_get_deck_list_includes_sideboard_after_marker():
+    response = _deck_response(
+        mainboard_cards={"a": {"quantity": 4, "card": {"name": "Lightning Bolt"}}},
+        sideboard={**_SIDEBOARD, "t": {"quantity": 1, "card": {"name": "Flaring Pain"}}},
+    )
+    with patch("mtg_utils.utils.moxfield_api.scraper.get", return_value=response):
+        result = get_deck_list("fake-id", include_sideboard=True)
+    assert result == ["4 Lightning Bolt", SIDEBOARD_MARKER, "1 Flaring Pain", "3 Pyroblast"]
+
+
+@pytest.mark.unit
+def test_get_deck_list_empty_sideboard_adds_no_marker():
+    response = _deck_response(mainboard_cards={"a": {"quantity": 4, "card": {"name": "Lightning Bolt"}}})
+    with patch("mtg_utils.utils.moxfield_api.scraper.get", return_value=response):
+        result = get_deck_list("fake-id", include_sideboard=True)
+    assert result == ["4 Lightning Bolt"]
+
+
+@pytest.mark.unit
+def test_get_deck_list_tolerates_missing_commanders_board():
+    response = MagicMock()
+    response.json.return_value = {
+        "boards": {"mainboard": {"cards": {"a": {"quantity": 4, "card": {"name": "Lightning Bolt"}}}}}
+    }
+    with patch("mtg_utils.utils.moxfield_api.scraper.get", return_value=response):
+        result = get_deck_list("fake-id", include_sideboard=True)
+    assert result == ["4 Lightning Bolt"]
 
 
 @pytest.mark.unit

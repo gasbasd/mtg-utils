@@ -35,13 +35,18 @@
       "file": "card_library/decks/ironman.txt",
       "id": "l5K8aOvATk6golIQEu5FNw"
     },
-    "patrizio": {
-      "file": "card_library/decks/patrizio.txt",
-      "id": "GFpGY6q44EiSxzFGZS-iyQ"
+    "guidelight": {
+      "file": "card_library/decks/guidelight.txt",
+      "id": "nmygAb1kD3WcIB2WjYV3gg",
+      "shared_decks": ["soulherder"]
     },
     "tome-skimmer": {
       "file": "card_library/decks/tome-skimmer.txt",
       "id": "gcH8M6G7DkO0BSgjNhzpAQ"
+    },
+    "patrizio": {
+      "file": "card_library/decks/patrizio.txt",
+      "id": "GFpGY6q44EiSxzFGZS-iyQ"
     }
   },
   "purchased_file": "card_library/purchased.txt",

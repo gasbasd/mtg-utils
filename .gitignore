@@ -18,3 +18,7 @@ card_library/buylist.txt
 card_library/others_bought.txt
 card_library/to add decks.txt
 card_library/decks/gretchen_pdc2.txt
+
+# CardTrader order exports and the CSVs generated from them
+/cardtrader_order_*.xls
+/*-moxfield.csv

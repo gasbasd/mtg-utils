@@ -10,6 +10,7 @@ A command-line utility for managing Magic: The Gathering card collections, decks
 - Generate a consolidated shopping list across multiple planned decks
 - Find cards in your collection that are used in multiple decks
 - Keep track of newly purchased cards
+- Turn a CardTrader order export into a Moxfield collection import
 
 ## Installation
 
@@ -89,12 +90,23 @@ create example file:
     },
     "deck2": {
       "file": "card_library/decks/deck2.txt",
-      "id": "moxfield-deck-id-2"
+      "id": "moxfield-deck-id-2",
+      "shared_decks": ["deck1"]
+    },
+    "burn": {
+      "file": "card_library/decks/burn.txt",
+      "id": "moxfield-deck-id-3",
+      "format": "pauper"
     }
   },
   "purchased_file": "card_library/purchased.txt"
 }
 ```
+
+Per-deck options:
+
+- `format` — `commander` (default: 100-card singleton, no sideboard) or `pauper` (60-card minimum, max 4 copies, 15-card sideboard). It decides whether the Moxfield sideboard is fetched and which rules `update-card-library` warns about.
+- `shared_decks` — the deck reuses copies already allocated to the listed decks instead of consuming new ones from your library.
 
 ## Usage
 
@@ -105,6 +117,8 @@ Update your card collection and decks from Moxfield:
 ```sh
 mtg-utils update-card-library
 ```
+
+Each deck is written to its `file` as `{qty} {card name}` lines. For formats with a sideboard the sideboard follows a `# Sideboard` marker line; every command treats the file as one pool of cards you need, so sideboard copies are consumed from your library too. Decks that break their format's rules (size, sideboard size, copy limit) are reported in a warning panel but still processed.
 
 #### Record purchased cards
 
@@ -122,6 +136,9 @@ Or check against a Moxfield deck:
 
 ```sh
 mtg-utils check-missing-cards --moxfield-id your-moxfield-deck-id
+
+# Include the deck's sideboard (Moxfield decks only; files already contain it)
+mtg-utils check-missing-cards --moxfield-id your-moxfield-deck-id --sideboard
 ```
 
 ### Show Shopping List
@@ -143,9 +160,57 @@ Options:
 
 - `-d / --deck-file` — path to a deck file (repeatable)
 - `-id / --moxfield-id` — Moxfield deck ID (repeatable)
+- `--sideboard` — also fetch each Moxfield deck's sideboard
 - `-o / --output-file` — write the buy list to a file in `{qty} {card name}` format (optional)
 
 > **Note:** Purchased cards (`purchased_formatted.txt`) only count toward your available pool for copies not already needed to fill a configured library deck.
+
+### Convert CardTrader Order
+
+Turn the `.xls` export of a CardTrader order into a CSV you can feed straight to Moxfield's
+collection importer:
+
+```sh
+# Writes cardtrader_order_20260901rvin7i-moxfield.csv next to the input
+mtg-utils convert-cardtrader-order cardtrader_order_20260901rvin7i.xls
+
+# Choose the destination yourself
+mtg-utils convert-cardtrader-order order.xls -o ready-to-import.csv
+```
+
+Options:
+
+- `ORDER_FILE` — the `.xls` CardTrader emailed you (positional, required)
+- `-o / --output-file` — where to write the CSV (default: `<order file>-moxfield.csv`)
+
+The conversion renames CardTrader's columns to Moxfield's, strips the zero padding from
+collector numbers, converts prices from cents to euros, turns the foil flag into `foil`, and
+maps card conditions (`Slightly Played` becomes `Lightly Played`) and language codes (`jp`
+becomes `ja`). Rows for other games are dropped and listed in the summary; an unrecognised
+condition aborts the run rather than importing something wrong.
+
+CardTrader also invents set codes and decorates card names, which Moxfield then rejects. Every
+row is therefore checked against Scryfall before the CSV is written — by set and collector
+number first, retried as a token, then by name — and the confirmed printing is what gets
+written. Everything that changed is listed in a **Corrected** panel:
+
+```
+╭───────────────────────────── Corrected: 10 ──────────────────────────────╮
+│ Goblin Army // Human Soldier | HOB T 4/2  → Goblin Army | THOB 4         │
+│ Guidelight Pathmaker (Borderless) | CDFT 324 → Guidelight Pathmaker | DFT 324 │
+│ Spirit Link (Retro Frame) | CDMR 274      → Spirit Link | DMR 274        │
+╰──────────────────────────────────────────────────────────────────────────╯
+```
+
+Rows Scryfall cannot confirm are written unchanged and listed under **Not found on Scryfall**
+so you can fix them by hand — typically CardTrader pseudo-sets like `PWPN` that lump years of
+promos together. Check the Corrected panel too: where CardTrader's own numbering is ambiguous
+the match is a best effort, not a guarantee.
+
+Requests are throttled to stay inside Scryfall's rate limit, and a rate-limited or failing
+request is retried with an escalating backoff, announced on stderr as it waits. If Scryfall
+stays unreachable the command still writes the CSV, keeps every printing it had already
+confirmed, and says which ones went unverified.
 
 ## Directory Structure
 

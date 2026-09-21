@@ -15,8 +15,9 @@ from mtg_utils.utils.readers import read_list
 @click.command()
 @click.option("--deck-file", "-d", help="Path to the deck file")
 @click.option("--moxfield-id", "-id", help="Moxfield ID of the deck to check")
+@click.option("--sideboard", is_flag=True, help="Also fetch the Moxfield deck's sideboard")
 @click.option("--config-file", help="Path to the config file", default=DEFAULT_CONFIG_FILE)
-def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_file: str) -> None:
+def check_missing_cards(deck_file: str | None, moxfield_id: str | None, sideboard: bool, config_file: str) -> None:
     """Check for missing cards in a specified deck compared to available cards."""
     if not deck_file and not moxfield_id:
         err_console.print("[red]Error: You must provide either --deck-file or --moxfield-id.[/red]")
@@ -25,7 +26,7 @@ def check_missing_cards(deck_file: str | None, moxfield_id: str | None, config_f
         err_console.print("[red]Error: Please provide only one of --deck-file or --moxfield-id.[/red]")
         raise SystemExit(1)
     if moxfield_id:
-        deck = get_deck_list(moxfield_id)
+        deck = get_deck_list(moxfield_id, include_sideboard=sideboard)
         if not deck:
             err_console.print(f"[red]Error: Could not retrieve deck with Moxfield ID {escape(moxfield_id)}.[/red]")
             raise SystemExit(1)

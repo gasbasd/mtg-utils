@@ -99,6 +99,27 @@ class TestComputeCardUsage:
         assert used == {"Snow-Covered Island": 16}
         assert "tatyova" not in unavailable
 
+    def test_fully_shared_deck_not_reported_when_pool_oversubscribed(self):
+        """A deck whose need is entirely covered by a shared deck consumes nothing, so it is
+        never missing — even once other decks have over-subscribed the library pool."""
+        library = {"Arcane Denial": 1}
+        deck_cards = {
+            "soulherder": {"Arcane Denial": 1},
+            "ironman": {"Arcane Denial": 1},
+            "guidelight": {"Arcane Denial": 1},
+        }
+        decks = [
+            ("soulherder", ["1 Arcane Denial"], _deck_cfg()),
+            ("ironman", ["1 Arcane Denial"], _deck_cfg()),
+            ("guidelight", ["1 Arcane Denial"], _deck_cfg(shared_decks=["soulherder"])),
+        ]
+        used, unavailable, _ = _compute_card_usage(library, deck_cards, decks)
+
+        # ironman is the deck that genuinely has no copy left to take.
+        assert "ironman" in unavailable
+        assert "guidelight" not in unavailable
+        assert used == {"Arcane Denial": 2}
+
     def test_shared_decks_details_in_unavailable_message(self):
         """When a card is unavailable and shared_details is non-empty, 'sharing:' appears."""
         library = {}  # nothing owned

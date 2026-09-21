@@ -72,12 +72,14 @@ card_library/purchased.txt ──Counter──► card_library/purchased_formatt
 - `update-card-library` is the **only** writer of the derived files. `check-missing-cards` and `show-shopping-list` read them and never write (except `show-shopping-list -o`).
 - **`shared_decks`** (per-deck in `config.json`): the deck reuses copies already allocated to the listed sibling decks rather than consuming new ones from the library pool. `_incremental_shared_quantity()` in `update_card_library/logic.py` recurses through chained shares so overlapping chains aren't double-counted, and guards against cycles.
 - **Purchased cards** count toward availability only for copies *not* already needed to cover a configured deck's deficit (see `deck_deficit` in `show_shopping_list/command.py`). A `*` in the output marks a card whose availability comes from the purchased file.
+- **Deck formats** (`DeckConfig.format`, default `commander`): `utils/formats.py` is the single home for format rules (`FORMATS`, `FormatRules`, `BASIC_LANDS`, `validate_deck()`). `update-card-library` fetches the Moxfield sideboard only when the format has one (`sideboard_max > 0`) and renders `validate_deck()` violations as a warning panel — never blocking. The pool logic is quantity-generic; nothing else needs to know the format.
 
 ### Card line format
 
-Every card file is one `{qty} {card name}` per line — except `purchased.txt`, which is bare names, repeated once per copy.
+Every card file is one `{qty} {card name}` per line — except `purchased.txt`, which is bare names, repeated once per copy. Lines starting with `#` are skipped by both parsers; a `# Sideboard` line (`SIDEBOARD_MARKER`) separates a deck's mainboard from its sideboard.
 
-- `parse_card_list()` (`utils/cards.py`) **requires** the quantity prefix; it raises on a bare name.
+- `parse_card_list()` (`utils/cards.py`) **requires** the quantity prefix; it raises on a bare name. It flattens a sectioned deck file into one pool, which is why every consumer counts sideboard copies as demand without knowing about sections.
+- `split_boards()` returns `(mainboard, sideboard)` raw lines — use it only where the split matters (format validation, `list-decks` display).
 - `parse_card_list_or_names()` tolerates both. Used for hand-written decklists passed to `show-shopping-list`.
 - `library_sort_key()` (`utils/moxfield_api.py`) puts snow-covered basics last. Use it whenever writing `owned_cards.txt` / `available_cards.txt`.
 

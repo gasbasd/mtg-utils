@@ -8,11 +8,7 @@ def test_load_deck_cards(tmp_path):
 
     result = load_deck_cards(str(deck_file))
 
-    assert result == {
-        "Forest": 1,
-        "Island": 1,
-        "Mountain": 2,
-    }
+    assert result == ({"Forest": 1, "Island": 1, "Mountain": 2}, {})
 
 
 def test_load_deck_cards_empty(tmp_path):
@@ -22,7 +18,7 @@ def test_load_deck_cards_empty(tmp_path):
 
     result = load_deck_cards(str(deck_file))
 
-    assert result == {}
+    assert result == ({}, {})
 
 
 def test_load_deck_cards_whitespace(tmp_path):
@@ -32,7 +28,14 @@ def test_load_deck_cards_whitespace(tmp_path):
 
     result = load_deck_cards(str(deck_file))
 
-    assert result == {
-        "Forest": 1,
-        "Island": 1,
-    }
+    assert result == ({"Forest": 1, "Island": 1}, {})
+
+
+def test_load_deck_cards_splits_sideboard(tmp_path):
+    """A '# Sideboard' marker separates the two boards."""
+    deck_file = tmp_path / "deck.txt"
+    deck_file.write_text("4 Lightning Bolt\n# Sideboard\n3 Pyroblast\n")
+
+    result = load_deck_cards(str(deck_file))
+
+    assert result == ({"Lightning Bolt": 4}, {"Pyroblast": 3})

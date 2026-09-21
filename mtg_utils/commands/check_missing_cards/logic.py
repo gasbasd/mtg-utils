@@ -34,20 +34,21 @@ def compute_missing_cards(
             total_in_other_decks = sum(qty for _, qty in in_other_decks)
 
             if total_in_other_decks > 0:
+                # Draw the shortfall down deck by deck: each one lends at most what it holds,
+                # and no more than what is still missing.
                 used_decks = []
-                if total_in_other_decks >= missing_quantity:
-                    for other_deck, qty in sorted(in_other_decks):
-                        cards_by_deck[other_deck].append((card_name, qty, missing_quantity))
-                        used_decks.append((other_deck, missing_quantity))
-                    deck_info = ", ".join([f"{dn} ({mq})" for dn, mq in used_decks])
-                    partially_missing_cards.append((card_name, missing_quantity, deck_info))
-                else:
-                    for other_deck, qty in sorted(in_other_decks):
-                        cards_by_deck[other_deck].append((card_name, qty, qty))
-                        used_decks.append((other_deck, qty))
-                    deck_info = ", ".join([f"{dn} ({qty})" for dn, qty in used_decks])
-                    partially_missing_cards.append((card_name, total_in_other_decks, deck_info))
-                    completely_missing_cards.append((card_name, missing_quantity - total_in_other_decks))
+                remaining = missing_quantity
+                for other_deck, qty in sorted(in_other_decks):
+                    if remaining <= 0:
+                        break
+                    borrowed = min(qty, remaining)
+                    cards_by_deck[other_deck].append((card_name, qty, borrowed))
+                    used_decks.append((other_deck, borrowed))
+                    remaining -= borrowed
+                deck_info = ", ".join([f"{dn} ({bq})" for dn, bq in used_decks])
+                partially_missing_cards.append((card_name, missing_quantity - remaining, deck_info))
+                if remaining > 0:
+                    completely_missing_cards.append((card_name, remaining))
             else:
                 completely_missing_cards.append((card_name, missing_quantity))
 

@@ -1,139 +1,23 @@
-1 A.I.M. Labs
-1 Adventurer's Inn
-1 Aerie Ouphes
-1 Aether Spellbomb
-1 Airbending Lesson
-1 Alexi's Cloak
-1 All That Glitters
-1 Antler Skulkin
-1 Arcbound Prototype
-1 Arcum's Astrolabe
-1 Automated Artificer
-1 Battered Golem
-1 Beamtown Beatstick
-1 Bloodflow Connoisseur
-1 Bloodthrone Vampire
-1 Boreal Druid
-1 Brainspoil
-1 Brass Knuckles
-1 Breath Weapon
-1 Brokers Hideout
-1 Call Damage Control
-1 Ceremonial Knife
-1 Clout of the Dominus
-1 Commune with Beavers
-1 Confound
-1 Counterspell
-1 Crashing Drawbridge
-1 Cryogen Relic
-1 Deadly Dispute
-1 Devoted Druid
-1 Devouring Swarm
-1 Disciple of the Vault
-1 Disruption Protocol
-1 Drix Fatemaker
-1 Duskshell Crawler
-1 Eagles of the North
-1 Energy Tap
-1 Essence Harvest
-1 Etherium Sculptor
-1 Eviscerator's Insight
-1 Evolution Charm
-1 Experimental Synthesizer
-1 Fiery Cannonade
-1 Fleetfeather Sandals
-1 Foundry Inspector
-1 Fractured Powerstone
-1 Frogmite
-1 Futurist Forge
-1 Galvanic Blast
-1 Geyser Drake
-1 Go Nuts!
-1 Goggles of Night
-1 Golem-Skin Gauntlets
-1 Great Furnace
-1 Guardian Idol
-1 Guidelight Optimizer
-1 H.E.R.B.I.E. Scout Unit
-1 Heliod's Pilgrim
-1 Hot Dog Cart
-1 Hydraulic Helper
-1 Illvoi Light Jammer
-1 Instant Ramen
-1 Iron Man, Master of Machines
-1 Izzet Boilerworks
-1 Lightning Bolt
-1 Long Feng, Grand Secretariat
-1 Machinesmith Automaton
-1 Mana Leak
-1 Master Chef
-1 Melded Moxite
-1 Mental Journey
-1 Metallic Rebuke
-1 Mirrorshell Crab
-1 Molten Tributary
-1 Myr Enforcer
-1 Myr Scrapling
-1 Naiad of Hidden Coves
-1 Nantuko Husk
-1 Nature's Claim
-1 Night's Whisper
-1 Oaken Siren
-1 Obscura Storefront
+1 An Offer You Can't Refuse
+1 Ancient Den
+1 Benevolent Blessing
+1 Benevolent Bodyguard
+1 Black Mage's Rod
+1 Cho-Manno's Blessing
+1 Dispatch
+1 Essence Flux
+1 Fellwar Stone
+1 Frantic Search
+1 Gray Merchant of Asphodel
+1 Grisly Salvage
+1 Interface Ace
+1 Iron Apprentice
+1 Ivy Lane Denizen
+1 Lampad of Death's Vigil
+1 Memory Lapse
 1 Ornithopter of Paradise
-1 Phyrexian Ghoul
-1 Potioner's Trove
-1 Pridemalkin
-1 Project Deathlok Soldier
-1 Prying Blade
-1 Psychotic Fury
-1 Putrid Goblin
-1 Radiant Fountain
-1 Ram Through
-1 Rattleblaze Scarecrow
-1 Rendclaw Trow
-1 Renowned Weaponsmith
-1 Reverse Engineer
-1 Rite of Consumption
-1 Riveteers Overlook
-1 S.H.I.E.L.D. Spy Kit
-1 Sapphire Charm
-1 Sewer-veillance Cam
-1 Sinister Hideout
-1 Skred
-1 Smashing Spree
-1 Snakeskin Veil
-1 Sojourner's Companion
-1 Soul Manipulation
-1 Spaceshift
-1 Spell Rupture
-1 Spirit Link
-1 Stern Lesson
-1 Sticky Fingers
-1 Stoic Rebuttal
-1 Suffocating Fumes
-1 Terramorphic Expanse
-1 Treasure
-1 Trespasser's Curse
-1 Tuskguard Captain
-1 Utrom Monitor
-1 Utter Insignificance
-1 Vanishing
-1 Vibrant Cityscape
-1 Vines of Vastwood
-1 Volatile Fjord
-1 Voyager Quickwelder
-1 Ward of Lights
-1 Welding Jar
-1 Winding Way
-1 Wingrattle Scarecrow
-1 Wizard's Rockets
-1 Wrenn's Resolve
-1 Zookeeper Mechan
-10 Snow-Covered Mountain
-11 Snow-Covered Island
-2 Basilica Screecher
-2 Command Tower
-2 Guidelight Pathmaker
-2 Silverbluff Bridge
-2 Vedalken Engineer
+1 Page, Loose Leaf
+1 Prismatic Lens
+1 Rewind
+1 Tamiyo's Safekeeping
+1 Tithing Blade // Consuming Sepulcher
