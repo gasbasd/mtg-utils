@@ -67,6 +67,31 @@ class TestComputeMissingCards:
         entries = cards_by_deck["alpha"]
         assert any(card_name == "Island" for card_name, _, _ in entries)
 
+    def test_other_deck_contribution_is_capped_by_the_shortfall(self):
+        """4-of, 1 owned: the 3 short come from alpha alone, beta is left untouched."""
+        deck = {"Lightning Bolt": 4}
+        available = {"Lightning Bolt": 1}
+        cards_in_decks = {"Lightning Bolt": [("alpha", 4), ("beta", 2)]}
+        completely_missing, partially_missing, available_in_deck, cards_by_deck = compute_missing_cards(
+            deck, available, {}, cards_in_decks
+        )
+        assert completely_missing == []
+        assert partially_missing == [("Lightning Bolt", 3, "alpha (3)")]
+        assert cards_by_deck == {"alpha": [("Lightning Bolt", 4, 3)]}
+        assert available_in_deck == ["1 Lightning Bolt"]
+
+    def test_shortfall_is_spread_across_several_decks(self):
+        """4 short: alpha covers 2 of them, beta covers the remaining 2 of its 3."""
+        deck = {"Lightning Bolt": 4}
+        cards_in_decks = {"Lightning Bolt": [("alpha", 2), ("beta", 3)]}
+        completely_missing, partially_missing, _, cards_by_deck = compute_missing_cards(deck, {}, {}, cards_in_decks)
+        assert completely_missing == []
+        assert partially_missing == [("Lightning Bolt", 4, "alpha (2), beta (2)")]
+        assert cards_by_deck == {
+            "alpha": [("Lightning Bolt", 2, 2)],
+            "beta": [("Lightning Bolt", 3, 2)],
+        }
+
     def test_empty_deck(self):
         completely_missing, partially_missing, available_in_deck, cards_by_deck = compute_missing_cards({}, {}, {}, {})
         assert completely_missing == []
